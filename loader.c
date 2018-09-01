@@ -1,14 +1,14 @@
 #include <memory.h>
 #include "stdio.h"
 #include "stdlib.h"
-#include "loader.h"
-#include "cell.h"
+#include "headers/loader.h"
+#include "headers/cell.h"
 
 #define START_WIDTH 60
 #define START_HEIGHT 10
 
 
-void loadMap(char *fileName) {
+void load(char *fileName) {
     unsigned int isAdditionalRule = 0, heightPointer = 0;
     unsigned int currentHeight = START_HEIGHT;
     size_t widthPointer = 0;
@@ -41,9 +41,10 @@ void loadMap(char *fileName) {
 }
 
 void setCells(char **array, const unsigned int *height, const size_t *width) {
-    struct cell map[*height][*width];
+    struct cell **map = (struct cell **) malloc(*height * sizeof(struct cell *));
     unsigned int y = *height;
     for (int i = 0; i < *height; ++i) {
+        map[i] = (struct cell *) malloc(*width * sizeof(struct cell *));
         unsigned int x = 1;
         for (int j = 0; j < *width - 1; ++j) {
             map[i][j].x = x, map[i][j].y = y;

@@ -1,6 +1,6 @@
-void loadMap(char *fileName);
+void load(char *fileName);
 
 int main() {
-    loadMap("/Users/air/Documents/Programming/ICFPC 2012/maps/flood4.map");
+    load("/Users/air/Documents/Programming/ICFPC 2012/maps/beard1.map");
     return 0;
 }
