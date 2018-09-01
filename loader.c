@@ -19,7 +19,7 @@ void loadMap(char *fileName) {
     if (file == NULL) perror("Error in opening file");
     array = (char **) malloc(START_HEIGHT * sizeof(char *));
     while (1) {
-        strPointer = (char *) malloc(START_WIDTH * sizeof(char));
+        strPointer = (char *) malloc(START_WIDTH * sizeof(char *));
         strPointer = fgets(strPointer, START_WIDTH, file);
         if (!strPointer) break;
         if (heightPointer > currentHeight) {
@@ -27,13 +27,14 @@ void loadMap(char *fileName) {
             array = (char **) realloc(array, currentHeight);
         }
         if (*strPointer == '\n') isAdditionalRule = 1;
-        if (!isAdditionalRule) array[heightPointer] = strPointer;
-        else {
+        if (!isAdditionalRule) {
+            array[heightPointer] = strPointer;
+            ++heightPointer;
+        } else {
             /*
              * submission of rule changes
              */
         }
-        ++heightPointer;
     }
     widthPointer = getWidth(array, &heightPointer);
     setCells(array, &heightPointer, &widthPointer);
@@ -45,8 +46,7 @@ void setCells(char **array, const unsigned int *height, const size_t *width) {
     for (int i = 0; i < *height; ++i) {
         unsigned int x = 1;
         for (int j = 0; j < *width - 1; ++j) {
-            map[i][j].x = x;
-            map[i][j].y = y;
+            map[i][j].x = x, map[i][j].y = y;
             char symbol = array[i][j];
             switch (symbol) {
                 case 'R':
@@ -72,6 +72,7 @@ void setCells(char **array, const unsigned int *height, const size_t *width) {
                     break;
                 case ' ':
                     map[i][j].type = EMPTY;
+                    map[i][j].x = 0, map[i][j].y = 0;
                     break;
                 default:
                     break;
