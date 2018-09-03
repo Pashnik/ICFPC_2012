@@ -5,13 +5,12 @@
 #include "headers/cell.h"
 
 #define START_WIDTH 60
-#define START_HEIGHT 10
+#define START_HEIGHT 60
 
 
 void load(char *fileName) {
-    unsigned int isAdditionalRule = 0, heightPointer = 0;
+    unsigned int isAdditionalRule = 0, heightPointer = 0, widthPointer = 0;
     unsigned int currentHeight = START_HEIGHT;
-    size_t widthPointer = 0;
     FILE *file;
     char *strPointer;
     char **array;
@@ -19,12 +18,12 @@ void load(char *fileName) {
     if (file == NULL) perror("Error in opening file");
     array = (char **) malloc(START_HEIGHT * sizeof(char *));
     while (1) {
-        strPointer = (char *) malloc(START_WIDTH * sizeof(char *));
+        strPointer = (char *) malloc(START_WIDTH * sizeof(char));
         strPointer = fgets(strPointer, START_WIDTH, file);
         if (!strPointer) break;
         if (heightPointer > currentHeight) {
             currentHeight += START_HEIGHT;
-            array = (char **) realloc(array, currentHeight);
+            *array = (char *) realloc(*array, currentHeight * sizeof(char));
         }
         if (*strPointer == '\n') isAdditionalRule = 1;
         if (!isAdditionalRule) {
@@ -40,11 +39,11 @@ void load(char *fileName) {
     setCells(array, &heightPointer, &widthPointer);
 }
 
-void setCells(char **array, const unsigned int *height, const size_t *width) {
+void setCells(char **array, const unsigned int *height, const unsigned int *width) {
     struct cell **map = (struct cell **) malloc(*height * sizeof(struct cell *));
     unsigned int y = *height;
     for (int i = 0; i < *height; ++i) {
-        map[i] = (struct cell *) malloc(*width * sizeof(struct cell *));
+        map[i] = (struct cell *) malloc(*width * sizeof(struct cell));
         unsigned int x = 1;
         for (int j = 0; j < *width - 1; ++j) {
             map[i][j].x = x, map[i][j].y = y;
@@ -76,6 +75,8 @@ void setCells(char **array, const unsigned int *height, const size_t *width) {
                     map[i][j].x = 0, map[i][j].y = 0;
                     break;
                 default:
+                    map[i][j].type = EMPTY;
+                    map[i][j].x = 0, map[i][j].y = 0;
                     break;
             }
             ++x;
@@ -84,11 +85,11 @@ void setCells(char **array, const unsigned int *height, const size_t *width) {
     }
 }
 
-size_t getWidth(char **array, const unsigned int *height) {
+unsigned int getWidth(char **array, const unsigned int *height) {
     size_t maxWidth = 0;
     for (int i = 0; i < *height; ++i) {
         size_t currentWidth = strlen(array[i]);
         if (currentWidth > maxWidth) maxWidth = currentWidth;
     }
-    return maxWidth;
+    return (unsigned int) maxWidth;
 }

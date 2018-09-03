@@ -1,8 +1,8 @@
 #ifndef ICFPC_2012_LOADER_H
 #define ICFPC_2012_LOADER_H
 
-void setCells(char **array, const unsigned int *height, const size_t *width);
+void setCells(char **array, const unsigned int *height, const unsigned int *width);
 
-size_t getWidth(char **array, const unsigned int *height);
+unsigned int getWidth(char **array, const unsigned int *height);
 
 #endif //ICFPC_2012_LOADER_H

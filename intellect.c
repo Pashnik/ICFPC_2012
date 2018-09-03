@@ -2,8 +2,8 @@
 #include "headers/cell.h"
 #include "headers/intellect.h"
 
-struct lambda *getLambdas(struct cell **map, const unsigned int *height, const size_t *width) {
-    unsigned int currentQt = 0, commonQt = 10;
+struct lambda *getLambdas(struct cell **map, const unsigned int *height, const unsigned int *width) {
+    unsigned int currentQt = 0, commonQt = 100;
     struct lambda *lambdas = (struct lambda *) malloc(commonQt * sizeof(struct lambda));
     for (int i = 0; i < *height; ++i) {
         for (int j = 0; j < *width; ++j) {
