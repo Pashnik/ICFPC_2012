@@ -3,6 +3,7 @@
 #include "stdlib.h"
 #include "headers/loader.h"
 #include "headers/cell.h"
+#include "headers/intellect.h"
 
 #define START_WIDTH 60
 #define START_HEIGHT 60
@@ -36,10 +37,11 @@ void load(char *fileName) {
         }
     }
     widthPointer = getWidth(array, &heightPointer);
-    setCells(array, &heightPointer, &widthPointer);
+    struct cell **map = setCells(array, &heightPointer, &widthPointer);
+    makeMove(map, &heightPointer, &widthPointer);
 }
 
-void setCells(char **array, const unsigned int *height, const unsigned int *width) {
+struct cell **setCells(char **array, const unsigned int *height, const unsigned int *width) {
     struct cell **map = (struct cell **) malloc(*height * sizeof(struct cell *));
     unsigned int y = *height;
     for (int i = 0; i < *height; ++i) {
@@ -83,6 +85,7 @@ void setCells(char **array, const unsigned int *height, const unsigned int *widt
         }
         --y;
     }
+    return map;
 }
 
 unsigned int getWidth(char **array, const unsigned int *height) {
