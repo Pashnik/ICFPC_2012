@@ -49,10 +49,12 @@ struct cell **setCells(char **array, const unsigned int *height, const unsigned 
         unsigned int x = 1;
         for (int j = 0; j < *width - 1; ++j) {
             map[i][j].x = x, map[i][j].y = y;
+            map[i][j].id = 0, map[i][j].neighbourId = 0;
             char symbol = array[i][j];
             switch (symbol) {
                 case 'R':
                     map[i][j].type = ROBOT;
+                    map[i][j].id = 1;
                     break;
                 case '*':
                     map[i][j].type = STONE;
