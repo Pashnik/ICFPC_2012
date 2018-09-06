@@ -43,12 +43,10 @@ void load(char *fileName) {
 
 struct cell **setCells(char **array, const unsigned int *height, const unsigned int *width) {
     struct cell **map = (struct cell **) malloc(*height * sizeof(struct cell *));
-    unsigned int y = *height;
     for (int i = 0; i < *height; ++i) {
         map[i] = (struct cell *) malloc(*width * sizeof(struct cell));
-        unsigned int x = 1;
         for (int j = 0; j < *width - 1; ++j) {
-            map[i][j].x = x, map[i][j].y = y;
+            map[i][j].x = (unsigned int) j, map[i][j].y = (unsigned int) i;
             map[i][j].id = 0, map[i][j].neighbourId = 0;
             char symbol = array[i][j];
             switch (symbol) {
@@ -83,9 +81,7 @@ struct cell **setCells(char **array, const unsigned int *height, const unsigned 
                     map[i][j].x = 0, map[i][j].y = 0;
                     break;
             }
-            ++x;
         }
-        --y;
     }
     return map;
 }

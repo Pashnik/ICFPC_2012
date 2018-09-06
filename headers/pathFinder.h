@@ -10,4 +10,8 @@ struct cell *getNeighbours(struct cell cell);
 
 unsigned int isPath(struct cell **map, struct cell *cell);
 
+double heuristic(struct cell cell1, struct lambda cell2);
+
+void findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map);
+
 #endif //ICFPC_2012_PATHFINDER_H
