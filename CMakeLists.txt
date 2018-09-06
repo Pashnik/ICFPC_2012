@@ -3,4 +3,4 @@ project(ICFPC_2012 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(ICFPC_2012 main.c loader.c intellect.c pathFinder.c headers/loader.h headers/cell.h headers/intellect.h headers/pathFinder.h)
+add_executable(ICFPC_2012 main.c loader.c solver.c finder.c headers/loader.h headers/cell.h headers/solver.h headers/finder.h)

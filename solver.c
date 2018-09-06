@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include "headers/cell.h"
 #include "math.h"
-#include "headers/intellect.h"
-#include "headers/pathFinder.h"
+#include "headers/solver.h"
+#include "headers/finder.h"
+
 #define START_SIZE 100
 
-void makeMove(struct cell **map, const unsigned int *height, const unsigned int *width) {
+void makeMove(struct cell **map, const int *height, const int *width) {
     struct lambda *lambdas = (struct lambda *) malloc(START_SIZE * sizeof(struct lambda));
     struct wall *walls = (struct wall *) malloc(START_SIZE * sizeof(struct wall));
     setInitialInf(map, height, width, lambdas, &robot, walls, &out);
@@ -19,7 +20,7 @@ void makeMove(struct cell **map, const unsigned int *height, const unsigned int 
  * This method finds the coordinates of all found lambdas, walls and robots and remembers them
  */
 
-void setInitialInf(struct cell **map, const unsigned int *height, const unsigned int *width,
+void setInitialInf(struct cell **map, const int *height, const int *width,
                    struct lambda *lambdas, struct robot *robot, struct wall *walls, struct exit *out) {
     unsigned int currentLambdas = 0, commonLambdas = START_SIZE;
     unsigned int currentWalls = 0, commonWalls = START_SIZE;
@@ -48,7 +49,7 @@ void setInitialInf(struct cell **map, const unsigned int *height, const unsigned
     }
 }
 
-int findNextLambda(struct lambda *lambdas, struct robot *robot, unsigned int quantity) {
+int findNextLambda(struct lambda *lambdas, struct robot *robot, int quantity) {
     double distance = INTMAX_MAX, currentDistance = 0;
     int x1 = (*robot).x;
     int y1 = (*robot).y;
@@ -65,10 +66,9 @@ int findNextLambda(struct lambda *lambdas, struct robot *robot, unsigned int qua
     return index;
 }
 
-
 // Very bad. Think about it!
-unsigned int getLambdaQuantity(const unsigned int *height, const unsigned int *width, struct cell **map) {
-    unsigned int counter = 0;
+int getLambdaQuantity(const int *height, const int *width, struct cell **map) {
+    int counter = 0;
     for (int i = 0; i < *height; ++i) {
         for (int j = 0; j < *width; ++j) {
             if (map[i][j].type == LAMBDA) ++counter;

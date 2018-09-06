@@ -3,15 +3,15 @@
 #include "stdlib.h"
 #include "headers/loader.h"
 #include "headers/cell.h"
-#include "headers/intellect.h"
+#include "headers/solver.h"
 
 #define START_WIDTH 60
 #define START_HEIGHT 60
 
 
 void load(char *fileName) {
-    unsigned int isAdditionalRule = 0, heightPointer = 0, widthPointer = 0;
-    unsigned int currentHeight = START_HEIGHT;
+    int isAdditionalRule = 0, heightPointer = 0, widthPointer = 0;
+    int currentHeight = START_HEIGHT;
     FILE *file;
     char *strPointer;
     char **array;
@@ -41,13 +41,13 @@ void load(char *fileName) {
     makeMove(map, &heightPointer, &widthPointer);
 }
 
-struct cell **setCells(char **array, const unsigned int *height, const unsigned int *width) {
+struct cell **setCells(char **array, const int *height, const int *width) {
     struct cell **map = (struct cell **) malloc(*height * sizeof(struct cell *));
     for (int i = 0; i < *height; ++i) {
         map[i] = (struct cell *) malloc(*width * sizeof(struct cell));
         for (int j = 0; j < *width - 1; ++j) {
-            map[i][j].x = (unsigned int) j, map[i][j].y = (unsigned int) i;
-            map[i][j].id = 0, map[i][j].neighbourId = 0;
+            map[i][j].x = j, map[i][j].y = i;
+            map[i][j].id = 0;
             char symbol = array[i][j];
             switch (symbol) {
                 case 'R':
@@ -86,11 +86,11 @@ struct cell **setCells(char **array, const unsigned int *height, const unsigned 
     return map;
 }
 
-unsigned int getWidth(char **array, const unsigned int *height) {
+int getWidth(char **array, const int *height) {
     size_t maxWidth = 0;
     for (int i = 0; i < *height; ++i) {
         size_t currentWidth = strlen(array[i]);
         if (currentWidth > maxWidth) maxWidth = currentWidth;
     }
-    return (unsigned int) maxWidth;
+    return (int) maxWidth;
 }
