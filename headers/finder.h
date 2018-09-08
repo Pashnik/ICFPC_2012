@@ -8,10 +8,10 @@ int equalCoordinates(struct cell *start, struct lambda *end);
 
 struct cell *getNeighbours(struct cell *cell);
 
-int isPath(struct cell **map, struct cell *cell);
+int canMove(struct cell **map, struct cell *cell);
 
 double heuristic(struct cell *start, struct lambda *end);
 
-void findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map);
+int *findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map);
 
 #endif //ICFPC_2012_PATHFINDER_H

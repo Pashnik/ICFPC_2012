@@ -26,8 +26,10 @@ struct exit {
 void setInitialInf(struct cell **map, const int *height, const int *width,
                    struct lambda *lambdas, struct robot *robot, struct wall *walls, struct exit *out);
 
-int findNextLambda(struct lambda *lambdas, struct robot *robot, int quantity);
+int findNextLambda(struct lambda *lambdas, struct robot *robot, const int *quantity);
 
 int getLambdaQuantity(const int *height, const int *width, struct cell **map);
+
+struct cell getCellbyId(int id, struct cell **map, const int *height, const int *width);
 
 #endif //ICFPC_2012_INTELLECT_H

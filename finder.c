@@ -11,7 +11,7 @@
  * This method finds the shortest path from point a to point b, using the algorithm A-STAR
  */
 
-void findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map) {
+int *findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map) {
     int *path = malloc(HOPES * sizeof(int));
     unsigned int hopeNumber = 0, id = 2;
     struct cell currentCell;
@@ -21,9 +21,10 @@ void findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **
         double currentHeuristic = 0, minHeuristic = HOPES;
         struct cell *neighbours = getNeighbours(&currentCell);
         for (int i = 0; i < NUM_OF_NEIGHBOURS; ++i) {
-            if (isPath(map, &neighbours[i])) {
+            int x = neighbours[i].x, y = neighbours[i].y;
+            if (canMove(map, &neighbours[i]) && map[y][x].id == 0) {
                 currentHeuristic = heuristic(&neighbours[i], lambda);
-                map[neighbours[i].y][neighbours[i].x].id = id;
+                map[y][x].id = id;
                 if (currentHeuristic < minHeuristic) {
                     minHeuristic = currentHeuristic;
                     index = i;
@@ -35,9 +36,10 @@ void findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **
         currentCell.x = neighbours[index].x, currentCell.y = neighbours[index].y;
         ++hopeNumber;
     }
+    (*robot).x = currentCell.x, (*robot).y = currentCell.y;
+    return path;
 }
 
-// It is possible to add not all neighbors at once, but exclude impassable cells
 struct cell *getNeighbours(struct cell *cell) {
     struct cell *neighbours = (struct cell *) malloc(NUM_OF_NEIGHBOURS * sizeof(struct cell));
     neighbours[0].x = (*cell).x + 1, neighbours[0].y = (*cell).y;
@@ -48,7 +50,7 @@ struct cell *getNeighbours(struct cell *cell) {
 }
 
 int equalCoordinates(struct cell *start, struct lambda *end) {
-    if ((*start).x == (*end).x || (*start).y == (*end).y) return 1;
+    if ((*start).x == (*end).x && (*start).y == (*end).y) return 1;
     return 0;
 }
 
@@ -56,8 +58,8 @@ double heuristic(struct cell *start, struct lambda *end) {
     return sqrt(pow((*start).x - (*end).x, 2) + pow((*start).y - (*end).y, 2));
 }
 
-int isPath(struct cell **map, struct cell *cell) {
+int canMove(struct cell **map, struct cell *cell) {
     int x = (*cell).x, y = (*cell).y;
-    if (map[y][x].type == GROUND) return 1;
+    if (map[y][x].type == GROUND || map[y][x].type == LAMBDA) return 1;
     return 0;
 }
