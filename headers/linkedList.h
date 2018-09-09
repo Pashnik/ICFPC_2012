@@ -1,16 +1,16 @@
 #ifndef ICFPC_2012_LINKEDLIST_H
 #define ICFPC_2012_LINKEDLIST_H
 
-#include "solver.h"
+#include "lambda.h"
 
 typedef struct Node {
-    struct lambda value;
+    struct lambda lambda;
     struct Node *next;
 } Node;
 
-void pop(Node **head);
+struct lambda pop(Node **head);
 
-void deleteNth(Node **head, int n);
+struct lambda deleteNth(Node **head, int n);
 
 Node *getNth(Node *head, int n);
 

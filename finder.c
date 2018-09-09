@@ -3,6 +3,7 @@
 #include "headers/solver.h"
 #include "headers/cell.h"
 #include "headers/finder.h"
+#include "stdio.h"
 
 #define NUM_OF_NEIGHBOURS 4
 #define HOPES 100
@@ -11,11 +12,13 @@
  * This method finds the shortest path from point a to point b, using the algorithm A-STAR
  */
 
-int *findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map) {
+int findShortestPath(struct robot *robot, struct lambda *lambda,
+                     struct cell **map, const int *height, const int *width) {
     int *path = malloc(HOPES * sizeof(int));
     unsigned int hopeNumber = 0, id = 2;
     struct cell currentCell;
     currentCell.x = (*robot).x, currentCell.y = (*robot).y;
+    map[currentCell.y][currentCell.x].id = 1;
     while (!equalCoordinates(&currentCell, lambda)) {
         int index = 0;
         double currentHeuristic = 0, minHeuristic = HOPES;
@@ -37,7 +40,12 @@ int *findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **
         ++hopeNumber;
     }
     (*robot).x = currentCell.x, (*robot).y = currentCell.y;
-    return path;
+    path[hopeNumber] = map[currentCell.y][currentCell.x].id;
+    printWay(path, &hopeNumber, height, width, map);
+
+    rollBackIds(height, width, map, robot);
+    free(path);
+    return 1;
 }
 
 struct cell *getNeighbours(struct cell *cell) {
@@ -60,6 +68,49 @@ double heuristic(struct cell *start, struct lambda *end) {
 
 int canMove(struct cell **map, struct cell *cell) {
     int x = (*cell).x, y = (*cell).y;
-    if (map[y][x].type == GROUND || map[y][x].type == LAMBDA) return 1;
+    if (map[y][x].type == GROUND || map[y][x].type == LAMBDA || map[y][x].type == ROBOT) return 1;
     return 0;
+}
+
+void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, struct cell **map) {
+    struct cell prev, current;
+    prev.x = 0, current.x = 0;
+    for (int i = 1; i <= *hopes; ++i) {
+        int currentId = path[i], prevId = path[i - 1];
+        for (int j = 0; j < *height; ++j) {
+            for (int k = 0; k < *width; ++k) {
+                if (map[j][k].id == currentId) {
+                    current = map[j][k];
+                }
+                if (map[j][k].id == prevId) {
+                    prev = map[j][k];
+                }
+            }
+        }
+        printRobotsCommand(prev, current);
+    }
+}
+
+void printRobotsCommand(struct cell prev, struct cell current) {
+    if (prev.y < current.y)
+        printf("D");
+    else {
+        if (prev.y > current.y)
+            printf("U");
+    }
+    if (prev.x < current.x)
+        printf("R");
+    else {
+        if (prev.x > current.x)
+            printf("L");
+    }
+    printf("\n");
+}
+
+void rollBackIds(const int *height, const int *width, struct cell **map, struct robot *robot) {
+    for (int i = 0; i < *height; ++i) {
+        for (int j = 0; j < *width; ++j) {
+            map[i][j].id = 0;
+        }
+    }
 }

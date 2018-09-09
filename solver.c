@@ -4,20 +4,23 @@
 #include "headers/solver.h"
 #include "headers/finder.h"
 
+
 #define START_SIZE 100
 
-void makeMove(struct cell **map, const int *height, const int *width) {
-    int quantity = getLambdaQuantity(height, width, map);
-    struct lambda *lambdas = (struct lambda *) malloc(START_SIZE * sizeof(struct lambda));
+void start(struct cell **map, const int *height, const int *width) {
+    Node *node = NULL;
     struct wall *walls = (struct wall *) malloc(START_SIZE * sizeof(struct wall));
-    setInitialInf(map, height, width, lambdas, &robot, walls, &out);
+    setInitialInf(map, height, width, &node, &robot, walls, &out);
+    Node *first = node;
 
     //Test for finding the path to the shortest lambda!
-    for (int i = 0; i < quantity; ++i) {
-        int nextLambda = findNextLambda(lambdas, &robot, &quantity);
-        findShortestPath(&robot, &lambdas[nextLambda], map);
+    while (node != NULL) {
+        struct lambda lambda;
+        int nextLambda = findNextLambda(node, &robot);
+        lambda = deleteNth(&node, nextLambda);
+        if (findShortestPath(&robot, &lambda, map, height, width)) node = first;
+        else node = node->next;
     }
-    //int *path = findShortestPath(&robot, &lambdas[nextLambda], map);
 }
 
 /*
@@ -25,22 +28,18 @@ void makeMove(struct cell **map, const int *height, const int *width) {
  */
 
 void setInitialInf(struct cell **map, const int *height, const int *width,
-                   struct lambda *lambdas, struct robot *robot, struct wall *walls, struct exit *out) {
-    unsigned int currentLambdas = 0, commonLambdas = START_SIZE;
+                   Node **node, struct robot *robot, struct wall *walls, struct exit *out) {
     unsigned int currentWalls = 0, commonWalls = START_SIZE;
     for (int i = 0; i < *height; ++i) {
         for (int j = 0; j < *width - 1; ++j) {
             if (map[i][j].type == LAMBDA) {
-                lambdas[currentLambdas].x = map[i][j].x, lambdas[currentLambdas].y = map[i][j].y;
-                if (currentLambdas > commonLambdas) {
-                    commonLambdas *= 2;
-                    lambdas = realloc(lambdas, commonLambdas * sizeof(struct lambda));
-                }
-                ++currentLambdas;
+                struct lambda current;
+                current.x = map[i][j].x, current.y = map[i][j].y;
+                push(node, current);
             }
             if (map[i][j].type == ROBOT)
                 (*robot).x = map[i][j].x, (*robot).y = map[i][j].y;
-            if (map[i][j].type == WALL) {
+            if (map[i][j].type == STONE) {
                 walls[currentWalls].x = map[i][j].x, walls[currentWalls].y = map[i][j].y;
                 if (currentWalls > commonWalls) {
                     commonWalls *= 2;
@@ -53,31 +52,22 @@ void setInitialInf(struct cell **map, const int *height, const int *width,
     }
 }
 
-int findNextLambda(struct lambda *lambdas, struct robot *robot, const int *quantity) {
+int findNextLambda(Node *node, struct robot *robot) {
     double distance = START_SIZE, currentDistance = 0;
-    int index = 0;
-    for (int i = 0; i < *quantity; ++i) {
-        currentDistance = sqrt(pow((*robot).x - lambdas[i].x, 2) + pow(lambdas[i].x - lambdas[i].y, 2));
+    int index = 0, currentIndex = 0;
+    while (node != NULL) {
+        currentDistance = sqrt(pow((*robot).x - node->lambda.x, 2) + pow((*robot).y - node->lambda.y, 2));
         if (currentDistance < distance) {
             distance = currentDistance;
-            index = i;
+            index = currentIndex;
         }
+        node = node->next;
+        ++currentIndex;
     }
     return index;
 }
 
-// Very bad. Think about it!
-int getLambdaQuantity(const int *height, const int *width, struct cell **map) {
-    int counter = 0;
-    for (int i = 0; i < *height; ++i) {
-        for (int j = 0; j < *width - 1; ++j) {
-            if (map[i][j].type == LAMBDA) ++counter;
-        }
-    }
-    return counter;
-}
-
-struct cell getCellbyId(int id, struct cell **map, const int *height, const int *width) {
+struct cell getLambdaById(int id, struct cell **map, const int *height, const int *width) {
     struct cell failure;
     failure.x = -1, failure.y = -1;
     for (int i = 0; i < *height; ++i) {

@@ -12,6 +12,13 @@ int canMove(struct cell **map, struct cell *cell);
 
 double heuristic(struct cell *start, struct lambda *end);
 
-int *findShortestPath(struct robot *robot, struct lambda *lambda, struct cell **map);
+int findShortestPath(struct robot *robot, struct lambda *lambda,
+                     struct cell **map, const int *height, const int *width);
+
+void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, struct cell **map);
+
+void printRobotsCommand(struct cell prev, struct cell current);
+
+void rollBackIds(const int *height, const int *width, struct cell **map, struct robot *robot);
 
 #endif //ICFPC_2012_PATHFINDER_H

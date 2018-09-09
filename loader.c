@@ -38,7 +38,7 @@ void load(char *fileName) {
     }
     widthPointer = getWidth(array, &heightPointer);
     struct cell **map = setCells(array, &heightPointer, &widthPointer);
-    makeMove(map, &heightPointer, &widthPointer);
+    start(map, &heightPointer, &widthPointer);
 }
 
 struct cell **setCells(char **array, const int *height, const int *width) {
@@ -52,7 +52,6 @@ struct cell **setCells(char **array, const int *height, const int *width) {
             switch (symbol) {
                 case 'R':
                     map[i][j].type = ROBOT;
-                    map[i][j].id = 1;
                     break;
                 case '*':
                     map[i][j].type = STONE;
