@@ -2,29 +2,28 @@
 #define ICFPC_2012_INTELLECT_H
 
 #include "linkedList.h"
+#include "cell.h"
 
-void start(struct cell **map, const int *height, const int *width);
+void start(Cell **map, const int *height, const int *width);
 
-struct robot {
+typedef struct robot {
     int x;
     int y;
-} robot;
+} Robot;
 
-struct wall {
+typedef struct wall {
     int x;
     int y;
-};
+} Wall;
 
-struct exit {
+typedef struct exit {
     int x;
     int y;
-} out;
+} Exit;
 
-void setInitialInf(struct cell **map, const int *height, const int *width,
-                   Node **node, struct robot *robot, struct wall *walls, struct exit *out);
+void setInitialInf(Cell **map, const int *height, const int *width,
+                   Node **node, Robot *robot, Wall *walls, Exit *out);
 
-int findNextLambda(Node *node, struct robot *robot);
-
-struct cell getLambdaById(int id, struct cell **map, const int *height, const int *width);
+int findNextLambda(Node *node, Robot *robot);
 
 #endif //ICFPC_2012_INTELLECT_H

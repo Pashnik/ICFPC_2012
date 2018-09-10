@@ -2,12 +2,10 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "headers/loader.h"
-#include "headers/cell.h"
 #include "headers/solver.h"
 
 #define START_WIDTH 60
 #define START_HEIGHT 60
-
 
 void load(char *fileName) {
     int isAdditionalRule = 0, heightPointer = 0, widthPointer = 0;
@@ -37,15 +35,15 @@ void load(char *fileName) {
         }
     }
     widthPointer = getWidth(array, &heightPointer);
-    struct cell **map = setCells(array, &heightPointer, &widthPointer);
+    Cell **map = setCells(array, &heightPointer, &widthPointer);
     start(map, &heightPointer, &widthPointer);
 }
 
-struct cell **setCells(char **array, const int *height, const int *width) {
-    struct cell **map = (struct cell **) malloc(*height * sizeof(struct cell *));
+Cell **setCells(char **array, const int *height, const int *width) {
+    Cell **map = (Cell **) malloc(*height * sizeof(Cell *));
     for (int i = 0; i < *height; ++i) {
-        map[i] = (struct cell *) malloc(*width * sizeof(struct cell));
-        for (int j = 0; j < *width - 1; ++j) {
+        map[i] = (Cell *) malloc(*width * sizeof(Cell));
+        for (int j = 0; j < *width; ++j) {
             map[i][j].x = j, map[i][j].y = i;
             map[i][j].id = 0;
             char symbol = array[i][j];
@@ -71,10 +69,6 @@ struct cell **setCells(char **array, const int *height, const int *width) {
                 case 'O':
                     map[i][j].type = OPENED_OUT;
                     break;
-                case ' ':
-                    map[i][j].type = EMPTY;
-                    map[i][j].x = 0, map[i][j].y = 0;
-                    break;
                 default:
                     map[i][j].type = EMPTY;
                     map[i][j].x = 0, map[i][j].y = 0;
@@ -91,5 +85,5 @@ int getWidth(char **array, const int *height) {
         size_t currentWidth = strlen(array[i]);
         if (currentWidth > maxWidth) maxWidth = currentWidth;
     }
-    return (int) maxWidth;
+    return (int) maxWidth - 1;
 }

@@ -4,22 +4,22 @@
 #include "headers/solver.h"
 #include "headers/finder.h"
 
-
 #define START_SIZE 100
 
-void start(struct cell **map, const int *height, const int *width) {
-    Node *node = NULL;
-    struct wall *walls = (struct wall *) malloc(START_SIZE * sizeof(struct wall));
-    setInitialInf(map, height, width, &node, &robot, walls, &out);
-    Node *first = node;
+void start(Cell **map, const int *height, const int *width) {
+    Node *lambdas = NULL;
+    Robot *robot = (Robot *) malloc(sizeof(Robot));
+    Wall *walls = (Wall *) malloc(START_SIZE * sizeof(Wall));
+    Exit *exit = (Exit *) malloc(sizeof(Exit));
+    setInitialInf(map, height, width, &lambdas, robot, walls, exit);
+    Node *lp = lambdas;
 
     //Test for finding the path to the shortest lambda!
-    while (node != NULL) {
-        struct lambda lambda;
-        int nextLambda = findNextLambda(node, &robot);
-        lambda = deleteNth(&node, nextLambda);
-        if (findShortestPath(&robot, &lambda, map, height, width)) node = first;
-        else node = node->next;
+    while (lambdas != NULL) {
+        int nextLambda = findNextLambda(lambdas, robot);
+        Lambda lambda = deleteNth(&lambdas, nextLambda);
+        if (findShortestPath(robot, &lambda, map, height, width))
+            if (lambdas != NULL) lambdas = lp;
     }
 }
 
@@ -27,36 +27,36 @@ void start(struct cell **map, const int *height, const int *width) {
  * This method finds the coordinates of all found lambdas, walls and robots and remembers them
  */
 
-void setInitialInf(struct cell **map, const int *height, const int *width,
-                   Node **node, struct robot *robot, struct wall *walls, struct exit *out) {
+void setInitialInf(Cell **map, const int *height, const int *width,
+                   Node **node, Robot *robot, Wall *walls, Exit *exit) {
     unsigned int currentWalls = 0, commonWalls = START_SIZE;
     for (int i = 0; i < *height; ++i) {
-        for (int j = 0; j < *width - 1; ++j) {
+        for (int j = 0; j < *width; ++j) {
             if (map[i][j].type == LAMBDA) {
-                struct lambda current;
+                Lambda current;
                 current.x = map[i][j].x, current.y = map[i][j].y;
                 push(node, current);
             }
             if (map[i][j].type == ROBOT)
-                (*robot).x = map[i][j].x, (*robot).y = map[i][j].y;
+                robot->x = map[i][j].x, robot->y = map[i][j].y;
             if (map[i][j].type == STONE) {
                 walls[currentWalls].x = map[i][j].x, walls[currentWalls].y = map[i][j].y;
                 if (currentWalls > commonWalls) {
                     commonWalls *= 2;
-                    walls = realloc(walls, commonWalls * sizeof(struct wall));
+                    walls = realloc(walls, commonWalls * sizeof(Wall));
                 }
                 ++currentWalls;
             }
-            if (map[i][j].type == CLOSED_OUT) (*out).x = map[i][j].x, (*out).y = map[i][j].y;
+            if (map[i][j].type == CLOSED_OUT) exit->x = map[i][j].x, exit->y = map[i][j].y;
         }
     }
 }
 
-int findNextLambda(Node *node, struct robot *robot) {
+int findNextLambda(Node *node, Robot *robot) {
     double distance = START_SIZE, currentDistance = 0;
     int index = 0, currentIndex = 0;
     while (node != NULL) {
-        currentDistance = sqrt(pow((*robot).x - node->lambda.x, 2) + pow((*robot).y - node->lambda.y, 2));
+        currentDistance = sqrt(pow(robot->x - node->lambda.x, 2) + pow(robot->y - node->lambda.y, 2));
         if (currentDistance < distance) {
             distance = currentDistance;
             index = currentIndex;
@@ -66,15 +66,3 @@ int findNextLambda(Node *node, struct robot *robot) {
     }
     return index;
 }
-
-struct cell getLambdaById(int id, struct cell **map, const int *height, const int *width) {
-    struct cell failure;
-    failure.x = -1, failure.y = -1;
-    for (int i = 0; i < *height; ++i) {
-        for (int j = 0; j < *width - 1; ++j) {
-            if (map[i][j].id == id) return map[i][j];
-        }
-    }
-    return failure;
-}
-

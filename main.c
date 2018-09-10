@@ -1,4 +1,4 @@
-void load(char *fileName);
+#include "headers/loader.h"
 
 int main() {
     load("/Users/air/Documents/Programming/ICFPC 2012/maps/contest3.map");

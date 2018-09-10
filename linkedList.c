@@ -19,23 +19,27 @@ Node *getNth(Node *head, int n) {
 }
 
 
-struct lambda deleteNth(Node **head, int n) {
+Lambda deleteNth(Node **head, int n) {
     if (n == 0) return pop(head);
     Node *prev = getNth(*head, n - 1);
     Node *elm = prev->next;
-    struct lambda value = elm->lambda;
+    Lambda value = elm->lambda;
     prev->next = elm->next;
     free(elm);
     return value;
 }
 
-struct lambda pop(Node **head) {
+Lambda pop(Node **head) {
     Node *prev = NULL;
-    struct lambda value;
+    Lambda value;
     if (head == NULL) exit(-1);
     prev = (*head);
     value = prev->lambda;
     (*head) = (*head)->next;
     free(prev);
+    if ((*head) == NULL){
+        free(*head);
+        *head = NULL;
+    }
     return value;
 }

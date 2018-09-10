@@ -1,24 +1,23 @@
 #ifndef ICFPC_2012_PATHFINDER_H
 #define ICFPC_2012_PATHFINDER_H
 
-#include "cell.h"
 #include "solver.h"
 
-int equalCoordinates(struct cell *start, struct lambda *end);
+int equalCoordinates(Cell *start, Lambda *end);
 
-struct cell *getNeighbours(struct cell *cell);
+Cell *getNeighbours(Cell *cell);
 
-int canMove(struct cell **map, struct cell *cell);
+int canMove(struct cell **map, Cell *cell);
 
-double heuristic(struct cell *start, struct lambda *end);
+double heuristic(Cell *start, Lambda *end);
 
-int findShortestPath(struct robot *robot, struct lambda *lambda,
-                     struct cell **map, const int *height, const int *width);
+int findShortestPath(Robot *robot, Lambda *lambda,
+                     Cell **map, const int *height, const int *width);
 
-void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, struct cell **map);
+void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, Cell **map);
 
-void printRobotsCommand(struct cell prev, struct cell current);
+void printRobotsCommand(Cell *prev, Cell *current);
 
-void rollBackIds(const int *height, const int *width, struct cell **map, struct robot *robot);
+void rollBackIds(const int *height, const int *width, Cell **map);
 
 #endif //ICFPC_2012_PATHFINDER_H

@@ -5,11 +5,11 @@ enum cellType {
     ROBOT, STONE, CLOSED_OUT, GROUND, WALL, LAMBDA, OPENED_OUT, EMPTY
 };
 
-struct cell {
+typedef struct cell {
     enum cellType type;
     unsigned int id;
     int x;
     int y;
-};
+} Cell;
 
 #endif //ICFPC_2012_CELL_H
