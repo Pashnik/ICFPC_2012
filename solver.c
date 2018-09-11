@@ -3,6 +3,7 @@
 #include "math.h"
 #include "headers/solver.h"
 #include "headers/finder.h"
+#include "stdio.h"
 
 #define START_SIZE 100
 
@@ -12,15 +13,19 @@ void start(Cell **map, const int *height, const int *width) {
     Wall *walls = (Wall *) malloc(START_SIZE * sizeof(Wall));
     Exit *exit = (Exit *) malloc(sizeof(Exit));
     setInitialInf(map, height, width, &lambdas, robot, walls, exit);
-    Node *lp = lambdas;
 
     //Test for finding the path to the shortest lambda!
     while (lambdas != NULL) {
         int nextLambda = findNextLambda(lambdas, robot);
         Lambda lambda = deleteNth(&lambdas, nextLambda);
         if (findShortestPath(robot, &lambda, map, height, width))
-            if (lambdas != NULL) lambdas = lp;
+            lambdas = getNth(lambdas, 0);
+        else {
+            printf("A");
+            break;
+        }
     }
+
 }
 
 /*

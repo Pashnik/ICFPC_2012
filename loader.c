@@ -69,6 +69,9 @@ Cell **setCells(char **array, const int *height, const int *width) {
                 case 'O':
                     map[i][j].type = OPENED_OUT;
                     break;
+                case ' ':
+                    map[i][j].type = EMPTY;
+                    break;
                 default:
                     map[i][j].type = EMPTY;
                     map[i][j].x = 0, map[i][j].y = 0;

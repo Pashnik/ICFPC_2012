@@ -20,4 +20,6 @@ void printRobotsCommand(Cell *prev, Cell *current);
 
 void rollBackIds(const int *height, const int *width, Cell **map);
 
+Cell getCellById(const int *height, const int *width, Cell **map, int id);
+
 #endif //ICFPC_2012_PATHFINDER_H

@@ -66,49 +66,51 @@ double heuristic(Cell *start, Lambda *end) {
 
 int canMove(Cell **map, Cell *cell) {
     int x = cell->x, y = cell->y;
-    if (map[y][x].type == GROUND || map[y][x].type == LAMBDA || map[y][x].type == ROBOT) return 1;
+    if (map[y][x].type == GROUND || map[y][x].type == LAMBDA || map[y][x].type == ROBOT ||
+        map[y][x].type == EMPTY)
+        return 1;
     return 0;
 }
 
 void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, Cell **map) {
     Cell *prev = (Cell *) malloc(sizeof(Cell));
     Cell *current = (Cell *) malloc(sizeof(Cell));
+    *prev = getCellById(height, width, map, path[0]);
     for (int i = 1; i <= *hopes; ++i) {
-        int currentId = path[i], prevId = path[i - 1];
-        for (int j = 0; j < *height; ++j) {
-            for (int k = 0; k < *width; ++k) {
-                if (map[j][k].id == currentId) {
-                    *current = map[j][k];
-                }
-                if (map[j][k].id == prevId) {
-                    *prev = map[j][k];
-                }
-            }
-        }
+        *current = getCellById(height, width, map, path[i]);
         printRobotsCommand(prev, current);
+        *prev = *current;
     }
 }
 
 void printRobotsCommand(Cell *prev, Cell *current) {
-    if (prev->y < current->y)
-        printf("D");
+    if (prev->y < current->y) printf("D");
     else {
-        if (prev->y > current->y)
-            printf("U");
-    }
-    if (prev->x < current->x)
-        printf("R");
-    else {
-        if (prev->x > current->x)
-            printf("L");
+        if (prev->y > current->y) printf("U");
+        else {
+            if (prev->x < current->x) printf("R");
+            else {
+                if (prev->x > current->x) printf("L");
+            }
+        }
     }
     printf("\n");
 }
 
 void rollBackIds(const int *height, const int *width, Cell **map) {
-    for (int i = 0; i < *height; ++i) {
+    for (int i = 1; i < *height; ++i) {
         for (int j = 0; j < *width; ++j) {
             map[i][j].id = 0;
         }
     }
+}
+
+Cell getCellById(const int *height, const int *width, Cell **map, int id) {
+    Cell failure = {0, 0, -1, -1};
+    for (int i = 0; i < *height; ++i) {
+        for (int j = 0; j < *width; ++j) {
+            if (map[i][j].id == id) return map[i][j];
+        }
+    }
+    return failure;
 }

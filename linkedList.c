@@ -37,9 +37,5 @@ Lambda pop(Node **head) {
     value = prev->lambda;
     (*head) = (*head)->next;
     free(prev);
-    if ((*head) == NULL){
-        free(*head);
-        *head = NULL;
-    }
     return value;
 }
