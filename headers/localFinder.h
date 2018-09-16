@@ -3,15 +3,15 @@
 
 #include "solver.h"
 
-int equalCoordinates(Cell *start, Lambda *end);
+int equalCoordinates(Cell *start, Element *end);
 
 Cell *getNeighbours(Cell *cell);
 
 int canMove(struct cell **map, Cell *cell);
 
-double heuristic(Cell *start, Lambda *end);
+double heuristic(Cell *start, Element *end, const unsigned int *hopeNumber);
 
-int findShortestPath(Robot *robot, Lambda *lambda,
+int findShortestPath(Element *robot, Element *lambda,
                      Cell **map, const int *height, const int *width);
 
 void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, Cell **map);

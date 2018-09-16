@@ -2,22 +2,22 @@
 #include "headers/cell.h"
 #include "math.h"
 #include "headers/solver.h"
-#include "headers/finder.h"
+#include "headers/localFinder.h"
 #include "stdio.h"
 
 #define START_SIZE 100
 
 void start(Cell **map, const int *height, const int *width) {
     Node *lambdas = NULL;
-    Robot *robot = (Robot *) malloc(sizeof(Robot));
-    Wall *walls = (Wall *) malloc(START_SIZE * sizeof(Wall));
-    Exit *exit = (Exit *) malloc(sizeof(Exit));
-    setInitialInf(map, height, width, &lambdas, robot, walls, exit);
+    Node *stones = NULL;
+    Element *robot = (Element *) malloc(sizeof(Element));
+    Element *exit = (Element *) malloc(sizeof(Element));
+    setInitialInf(map, height, width, &lambdas, robot, &stones, exit);
 
     //Test for finding the path to the shortest lambda!
     while (lambdas != NULL) {
         int nextLambda = findNextLambda(lambdas, robot);
-        Lambda lambda = deleteNth(&lambdas, nextLambda);
+        Element lambda = deleteNth(&lambdas, nextLambda);
         if (findShortestPath(robot, &lambda, map, height, width))
             lambdas = getNth(lambdas, 0);
         else {
@@ -25,7 +25,6 @@ void start(Cell **map, const int *height, const int *width) {
             break;
         }
     }
-
 }
 
 /*
@@ -33,35 +32,29 @@ void start(Cell **map, const int *height, const int *width) {
  */
 
 void setInitialInf(Cell **map, const int *height, const int *width,
-                   Node **node, Robot *robot, Wall *walls, Exit *exit) {
-    unsigned int currentWalls = 0, commonWalls = START_SIZE;
+                   Node **lambda, Element *robot, Node **stone, Element *exit) {
     for (int i = 0; i < *height; ++i) {
         for (int j = 0; j < *width; ++j) {
+            Element current;
             if (map[i][j].type == LAMBDA) {
-                Lambda current;
                 current.x = map[i][j].x, current.y = map[i][j].y;
-                push(node, current);
+                push(lambda, current);
             }
-            if (map[i][j].type == ROBOT)
-                robot->x = map[i][j].x, robot->y = map[i][j].y;
             if (map[i][j].type == STONE) {
-                walls[currentWalls].x = map[i][j].x, walls[currentWalls].y = map[i][j].y;
-                if (currentWalls > commonWalls) {
-                    commonWalls *= 2;
-                    walls = realloc(walls, commonWalls * sizeof(Wall));
-                }
-                ++currentWalls;
+                current.x = map[i][j].x, current.y = map[i][j].y;
+                push(stone, current);
             }
             if (map[i][j].type == CLOSED_OUT) exit->x = map[i][j].x, exit->y = map[i][j].y;
+            if (map[i][j].type == ROBOT) robot->x = map[i][j].x, robot->y = map[i][j].y;
         }
     }
 }
 
-int findNextLambda(Node *node, Robot *robot) {
+int findNextLambda(Node *node, Element *robot) {
     double distance = START_SIZE, currentDistance = 0;
     int index = 0, currentIndex = 0;
     while (node != NULL) {
-        currentDistance = sqrt(pow(robot->x - node->lambda.x, 2) + pow(robot->y - node->lambda.y, 2));
+        currentDistance = sqrt(pow(robot->x - node->element.x, 2) + pow(robot->y - node->element.y, 2));
         if (currentDistance < distance) {
             distance = currentDistance;
             index = currentIndex;

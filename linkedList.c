@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include "headers/linkedList.h"
 
-void push(Node **head, struct lambda data) {
+void push(Node **head, Element data) {
     Node *tmp = (Node *) malloc(sizeof(Node));
-    tmp->lambda = data;
+    tmp->element = data;
     tmp->next = (*head);
     (*head) = tmp;
 }
@@ -19,22 +19,22 @@ Node *getNth(Node *head, int n) {
 }
 
 
-Lambda deleteNth(Node **head, int n) {
+Element deleteNth(Node **head, int n) {
     if (n == 0) return pop(head);
     Node *prev = getNth(*head, n - 1);
     Node *elm = prev->next;
-    Lambda value = elm->lambda;
+    Element value = elm->element;
     prev->next = elm->next;
     free(elm);
     return value;
 }
 
-Lambda pop(Node **head) {
+Element pop(Node **head) {
     Node *prev = NULL;
-    Lambda value;
+    Element value;
     if (head == NULL) exit(-1);
     prev = (*head);
-    value = prev->lambda;
+    value = prev->element;
     (*head) = (*head)->next;
     free(prev);
     return value;

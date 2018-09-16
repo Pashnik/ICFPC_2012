@@ -1,6 +1,6 @@
 #include "headers/loader.h"
 
 int main() {
-    load("/Users/air/Documents/Programming/ICFPC 2012/maps/beard1.map");
+    load("/Users/pashnik/Documents/Prog/ICFPC_2012/maps/my_test.map");
     return 0;
 }

@@ -3,27 +3,13 @@
 
 #include "linkedList.h"
 #include "cell.h"
+#include "element.h"
 
 void start(Cell **map, const int *height, const int *width);
 
-typedef struct robot {
-    int x;
-    int y;
-} Robot;
-
-typedef struct wall {
-    int x;
-    int y;
-} Wall;
-
-typedef struct exit {
-    int x;
-    int y;
-} Exit;
-
 void setInitialInf(Cell **map, const int *height, const int *width,
-                   Node **node, Robot *robot, Wall *walls, Exit *out);
+                   Node **lambda, Element *robot, Node **wall, Element *exit);
 
-int findNextLambda(Node *node, Robot *robot);
+int findNextLambda(Node *node, Element *robot);
 
 #endif //ICFPC_2012_INTELLECT_H

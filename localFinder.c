@@ -1,16 +1,16 @@
 #include <stdlib.h>
 #include <math.h>
-#include "headers/finder.h"
+#include "headers/localFinder.h"
 #include "stdio.h"
 
 #define NUM_OF_NEIGHBOURS 4
 #define HOPES 100
 
 /*
- * This method finds the shortest path from point a to point b, using the algorithm A-STAR
+ * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
  */
 
-int findShortestPath(Robot *robot, Lambda *lambda,
+int findShortestPath(Element *robot, Element *lambda,
                      Cell **map, const int *height, const int *width) {
     int *path = malloc(HOPES * sizeof(int));
     unsigned int hopeNumber = 0, id = 2;
@@ -24,7 +24,7 @@ int findShortestPath(Robot *robot, Lambda *lambda,
         for (int i = 0; i < NUM_OF_NEIGHBOURS; ++i) {
             int x = neighbours[i].x, y = neighbours[i].y;
             if (canMove(map, &neighbours[i]) && map[y][x].id == 0) {
-                currentHeuristic = heuristic(&neighbours[i], lambda);
+                currentHeuristic = heuristic(&neighbours[i], lambda, &hopeNumber);
                 map[y][x].id = id;
                 if (currentHeuristic < minHeuristic) {
                     minHeuristic = currentHeuristic;
@@ -55,13 +55,13 @@ Cell *getNeighbours(Cell *cell) {
     return neighbours;
 }
 
-int equalCoordinates(Cell *start, Lambda *end) {
+int equalCoordinates(Cell *start, Element *end) {
     if (start->x == end->x && start->y == end->y) return 1;
     return 0;
 }
 
-double heuristic(Cell *start, Lambda *end) {
-    return sqrt(pow(start->x - end->x, 2) + pow(start->y - end->y, 2));
+double heuristic(Cell *start, Element *end, const unsigned int *hopeNumber) {
+    return sqrt(pow(start->x - end->x, 2) + pow(start->y - end->y, 2)) + *hopeNumber;
 }
 
 int canMove(Cell **map, Cell *cell) {
