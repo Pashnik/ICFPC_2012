@@ -7,7 +7,6 @@ enum cellType {
 
 typedef struct cell {
     enum cellType type;
-    unsigned int id;
     int x;
     int y;
 } Cell;

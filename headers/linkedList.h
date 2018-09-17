@@ -4,7 +4,7 @@
 #include "element.h"
 
 typedef struct Node {
-    Element element;
+    Element *element;
     struct Node *next;
 } Node;
 
@@ -14,6 +14,8 @@ Element deleteNth(Node **head, int n);
 
 Node *getNth(Node *head, int n);
 
-void push(Node **head, Element data);
+void push(Node **head, Element *data);
+
+int getIndex(Node *head, Node *current);
 
 #endif //ICFPC_2012_LINKEDLIST_H

@@ -3,23 +3,25 @@
 
 #include "solver.h"
 
-int equalCoordinates(Cell *start, Element *end);
+int equalCoordinates(Element *start, Element *end);
 
-Cell *getNeighbours(Cell *cell);
+Element *getNeighbours(Element *element);
 
-int canMove(struct cell **map, Cell *cell);
+int canMove(Cell **map, Element *cell);
 
-double heuristic(Cell *start, Element *end, const unsigned int *hopeNumber);
+double heuristic(Element *start, Element *end, int *hopeNumber);
 
 int findShortestPath(Element *robot, Element *lambda,
                      Cell **map, const int *height, const int *width);
 
 void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, Cell **map);
 
-void printRobotsCommand(Cell *prev, Cell *current);
+void printRobotsCommand(Element *prev, Element *current);
 
 void rollBackIds(const int *height, const int *width, Cell **map);
 
-Cell getCellById(const int *height, const int *width, Cell **map, int id);
+Element getCellById(const int *height, const int *width, Cell **map, int id);
+
+Node *getMin(Node *node, const double *f);
 
 #endif //ICFPC_2012_PATHFINDER_H

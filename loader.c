@@ -45,7 +45,6 @@ Cell **setCells(char **array, const int *height, const int *width) {
         map[i] = (Cell *) malloc(*width * sizeof(Cell));
         for (int j = 0; j < *width; ++j) {
             map[i][j].x = j, map[i][j].y = i;
-            map[i][j].id = 0;
             char symbol = array[i][j];
             switch (symbol) {
                 case 'R':

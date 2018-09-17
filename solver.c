@@ -38,11 +38,11 @@ void setInitialInf(Cell **map, const int *height, const int *width,
             Element current;
             if (map[i][j].type == LAMBDA) {
                 current.x = map[i][j].x, current.y = map[i][j].y;
-                push(lambda, current);
+                push(lambda, &current);
             }
             if (map[i][j].type == STONE) {
                 current.x = map[i][j].x, current.y = map[i][j].y;
-                push(stone, current);
+                push(stone, &current);
             }
             if (map[i][j].type == CLOSED_OUT) exit->x = map[i][j].x, exit->y = map[i][j].y;
             if (map[i][j].type == ROBOT) robot->x = map[i][j].x, robot->y = map[i][j].y;
@@ -54,7 +54,7 @@ int findNextLambda(Node *node, Element *robot) {
     double distance = START_SIZE, currentDistance = 0;
     int index = 0, currentIndex = 0;
     while (node != NULL) {
-        currentDistance = sqrt(pow(robot->x - node->element.x, 2) + pow(robot->y - node->element.y, 2));
+        currentDistance = sqrt(pow(robot->x - node->element->x, 2) + pow(robot->y - node->element->y, 2));
         if (currentDistance < distance) {
             distance = currentDistance;
             index = currentIndex;
