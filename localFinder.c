@@ -4,27 +4,48 @@
 #include "stdio.h"
 
 #define NUM_OF_NEIGHBOURS 4
+#define SIZE 100
 
 /*
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
  */
 
-int findShortestPath(Element *robot, Element *lambda,
-                     Cell **map, const int *height, const int *width) {
+int findShortestPath(Element *robot, Element *lambda, Cell **map) {
     Node *closed = NULL; // items we've already reviewed
-    Node *opened;
-    push(&opened, robot); //items required for viewing
+    Node *opened = NULL; //items required for viewing
     Node *path = NULL;
-    int *g = (int *) malloc(100 * (sizeof(int)));
-    double *f = (double *) malloc(100 * sizeof(double));
+    push(&opened, robot);
+    robot->id = 0;
+    int id = 1;
+    double *g = (double *) malloc(SIZE * (sizeof(double)));
+    double *f = (double *) malloc(SIZE * sizeof(double));
     g[0] = 0;
-    f[0] = heuristic(robot, lambda, &g[0]);
+    f[0] = distance(robot, lambda);
     while (opened != NULL) {
-        Node *current = getMin(opened, f);
-        if (equalCoordinates(current->element, lambda)) return 1;
-
+        int minIndex = getMin(f, opened);
+        Element *current = (Element *) malloc(sizeof(Element));
+        *current = deleteNth(&opened, minIndex);
+        if (equalCoordinates(current, lambda)) {
+            reestablishPath(path);
+            return 1;
+        }
+        push(&closed, current);
+        Element *neighbours = getNeighbours(current);
+        for (int i = 0; i < NUM_OF_NEIGHBOURS; ++i) {
+            if (!haveElement(closed, &neighbours[i]) && canMove(map, &neighbours[i])) {
+                double temp = g[current->id] + distance(current, &neighbours[i]);
+                if (!haveElement(opened, &neighbours[i]) || temp < g[neighbours[i].id]) {
+                    neighbours[i].id = id;
+                    push(&path, &neighbours[i]);
+                    g[neighbours[i].id] = temp;
+                    f[neighbours[i].id] = g[neighbours[i].id] + distance(&neighbours[i], lambda);
+                    ++id;
+                }
+                if (!haveElement(opened, &neighbours[i])) push(&opened, &neighbours[i]);
+            }
+        }
     }
-    return 1;
+    return 0;
 }
 
 Element *getNeighbours(Element *element) {
@@ -41,8 +62,8 @@ int equalCoordinates(Element *start, Element *end) {
     return 0;
 }
 
-double heuristic(Element *start, Element *end, int *hopeNumber) {
-    return sqrt(pow(start->x - end->x, 2) + pow(start->y - end->y, 2)) + *hopeNumber;
+double distance(Element *start, Element *end) {
+    return sqrt(pow(start->x - end->x, 2) + pow(start->y - end->y, 2));
 }
 
 int canMove(Cell **map, Element *cell) {
@@ -51,18 +72,6 @@ int canMove(Cell **map, Element *cell) {
         map[y][x].type == EMPTY)
         return 1;
     return 0;
-}
-
-void printWay(const int *path, const unsigned int *hopes, const int *height, const int *width, Cell **map) {
-    /* Cell *prev = (Cell *) malloc(sizeof(Cell));
-     Cell *current = (Cell *) malloc(sizeof(Cell));
-     *prev = getCellById(height, width, map, path[0]);
-     for (int i = 1; i <= *hopes; ++i) {
-         *current = getCellById(height, width, map, path[i]);
-         printRobotsCommand(prev, current);
-         *prev = *current;
-     }
-     */
 }
 
 void printRobotsCommand(Element *prev, Element *current) {
@@ -79,16 +88,16 @@ void printRobotsCommand(Element *prev, Element *current) {
     printf("\n");
 }
 
-Node *getMin(Node *node, const double *f) {
-    Node *minNode = (Node *) malloc(sizeof(Node));
-    double minValue = 100;
-    Node *head = node;
-    while (node != NULL) {
-        if (f[getIndex(head, node)] < minValue) {
-            minValue = f[getIndex(head, node)];
-            minNode = node;
-        }
-        node = node->next;
+void reestablishPath(Node *path) {
+    Element *prev = (Element*) malloc(sizeof(Element));
+    Element *current = (Element*) malloc(sizeof(Element));
+
+    int listSize = getSize(path);
+    *current = deleteNth(&path, listSize);
+    for (int i = listSize - 1; i > 0; --i) {
+        *prev = deleteNth(&path, i);
+        printRobotsCommand(prev, current);
+        *current = *prev;
     }
-    return minNode;
+
 }

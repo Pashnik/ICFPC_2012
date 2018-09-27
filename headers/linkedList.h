@@ -16,6 +16,10 @@ Node *getNth(Node *head, int n);
 
 void push(Node **head, Element *data);
 
-int getIndex(Node *head, Node *current);
+int getMin(const double *f, Node *node);
+
+int haveElement(Node *head, Element *element);
+
+int getSize(Node *node);
 
 #endif //ICFPC_2012_LINKEDLIST_H

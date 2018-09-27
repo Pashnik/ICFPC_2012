@@ -5,7 +5,7 @@
 #include "headers/localFinder.h"
 #include "stdio.h"
 
-#define START_SIZE 100
+#define SIZE 100
 
 void start(Cell **map, const int *height, const int *width) {
     Node *lambdas = NULL;
@@ -18,12 +18,8 @@ void start(Cell **map, const int *height, const int *width) {
     while (lambdas != NULL) {
         int nextLambda = findNextLambda(lambdas, robot);
         Element lambda = deleteNth(&lambdas, nextLambda);
-        if (findShortestPath(robot, &lambda, map, height, width))
+        if (findShortestPath(robot, &lambda, map))
             lambdas = getNth(lambdas, 0);
-        else {
-            printf("A");
-            break;
-        }
     }
 }
 
@@ -35,14 +31,14 @@ void setInitialInf(Cell **map, const int *height, const int *width,
                    Node **lambda, Element *robot, Node **stone, Element *exit) {
     for (int i = 0; i < *height; ++i) {
         for (int j = 0; j < *width; ++j) {
-            Element current;
+            Element *current = (Element *) malloc(sizeof(Element));
             if (map[i][j].type == LAMBDA) {
-                current.x = map[i][j].x, current.y = map[i][j].y;
-                push(lambda, &current);
+                current->x = map[i][j].x, current->y = map[i][j].y;
+                push(lambda, current);
             }
             if (map[i][j].type == STONE) {
-                current.x = map[i][j].x, current.y = map[i][j].y;
-                push(stone, &current);
+                current->x = map[i][j].x, current->y = map[i][j].y;
+                push(stone, current);
             }
             if (map[i][j].type == CLOSED_OUT) exit->x = map[i][j].x, exit->y = map[i][j].y;
             if (map[i][j].type == ROBOT) robot->x = map[i][j].x, robot->y = map[i][j].y;
@@ -51,7 +47,7 @@ void setInitialInf(Cell **map, const int *height, const int *width,
 }
 
 int findNextLambda(Node *node, Element *robot) {
-    double distance = START_SIZE, currentDistance = 0;
+    double distance = SIZE, currentDistance = 0;
     int index = 0, currentIndex = 0;
     while (node != NULL) {
         currentDistance = sqrt(pow(robot->x - node->element->x, 2) + pow(robot->y - node->element->y, 2));
