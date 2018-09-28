@@ -14,7 +14,7 @@ int findShortestPath(Element *robot, Element *lambda,
                      Cell **map);
 
 
-void printRobotsCommand(Element *prev, Element *current);
+void printRobotsCommand(Element *first, Element *second);
 
 
 double distance(Element *start, Element *end);

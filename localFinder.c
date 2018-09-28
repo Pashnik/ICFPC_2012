@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "headers/localFinder.h"
+#include "headers/stack.h"
 #include "stdio.h"
 
 #define NUM_OF_NEIGHBOURS 4
@@ -26,6 +27,7 @@ int findShortestPath(Element *robot, Element *lambda, Cell **map) {
         Element *current = (Element *) malloc(sizeof(Element));
         *current = deleteNth(&opened, minIndex);
         if (equalCoordinates(current, lambda)) {
+            push(&path, current);
             reestablishPath(path);
             return 1;
         }
@@ -36,7 +38,7 @@ int findShortestPath(Element *robot, Element *lambda, Cell **map) {
                 double temp = g[current->id] + distance(current, &neighbours[i]);
                 if (!haveElement(opened, &neighbours[i]) || temp < g[neighbours[i].id]) {
                     neighbours[i].id = id;
-                    push(&path, &neighbours[i]);
+                    push(&path, current);
                     g[neighbours[i].id] = temp;
                     f[neighbours[i].id] = g[neighbours[i].id] + distance(&neighbours[i], lambda);
                     ++id;
@@ -74,30 +76,30 @@ int canMove(Cell **map, Element *cell) {
     return 0;
 }
 
-void printRobotsCommand(Element *prev, Element *current) {
-    if (prev->y < current->y) printf("D");
+void printRobotsCommand(Element *first, Element *second) {
+    if (first->y < second->y) pushCommand('U');
     else {
-        if (prev->y > current->y) printf("U");
+        if (first->y > second->y) pushCommand('D');
         else {
-            if (prev->x < current->x) printf("R");
+            if (first->x < second->x) pushCommand('L');
             else {
-                if (prev->x > current->x) printf("L");
+                if (first->x > second->x) pushCommand('R');
             }
         }
     }
-    printf("\n");
 }
 
 void reestablishPath(Node *path) {
-    Element *prev = (Element*) malloc(sizeof(Element));
-    Element *current = (Element*) malloc(sizeof(Element));
-
+    Element *prev;
+    Element *current;
     int listSize = getSize(path);
-    *current = deleteNth(&path, listSize);
-    for (int i = listSize - 1; i > 0; --i) {
-        *prev = deleteNth(&path, i);
-        printRobotsCommand(prev, current);
+    current = getNth(path, 0)->element;
+    while (current->id != 0) {
+        prev = getNth(path, listSize - current->id)->element;
+        printRobotsCommand(current, prev);
         *current = *prev;
     }
-
+    while (!isEmpty()) {
+        printf("%c\n", popCommand());
+    }
 }
