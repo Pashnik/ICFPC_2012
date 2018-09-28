@@ -70,28 +70,3 @@ int getSize(Node *node) {
     }
     return counter;
 }
-
-
-Node *getLast(Node *head) {
-    if (head == NULL) {
-        return NULL;
-    }
-    while (head->next) {
-        head = head->next;
-    }
-    return head;
-}
-
-void pushBack(Node *head, Element *value) {
-    Node *last = getLast(head);
-    Node *tmp = (Node *) malloc(sizeof(Node));
-    tmp->element = value;
-    tmp->next = NULL;
-    if (head != NULL) last->next = tmp;
-    else {
-        head = tmp;
-        head->next = NULL;
-    }
-}
-
-

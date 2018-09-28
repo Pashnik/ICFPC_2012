@@ -22,8 +22,4 @@ int haveElement(Node *head, Element *element);
 
 int getSize(Node *node);
 
-void pushBack(Node *head, Element *value);
-
-Node *getLast(Node *head);
-
 #endif //ICFPC_2012_LINKEDLIST_H

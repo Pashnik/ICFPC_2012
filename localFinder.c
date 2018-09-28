@@ -29,6 +29,8 @@ int findShortestPath(Element *robot, Element *lambda, Cell **map) {
         if (equalCoordinates(current, lambda)) {
             push(&path, current);
             reestablishPath(path);
+            robot->x = lambda->x;
+            robot->y = lambda->y;
             return 1;
         }
         push(&closed, current);
