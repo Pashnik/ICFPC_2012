@@ -3,6 +3,7 @@
 #include "math.h"
 #include "headers/solver.h"
 #include "headers/localFinder.h"
+#include "headers/queue.h"
 #include "stdio.h"
 
 #define SIZE 100
@@ -59,4 +60,12 @@ int findNextLambda(Node *node, Element *robot) {
         ++currentIndex;
     }
     return index;
+}
+
+void makeWave(Cell **map, const int *height, const int *width, Element *robot) {
+    Node *queue = NULL;
+    enqueue(&queue, robot);
+    while (queue != NULL) {
+        /*??????*/
+    }
 }

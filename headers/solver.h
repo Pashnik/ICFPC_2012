@@ -12,4 +12,6 @@ void setInitialInf(Cell **map, const int *height, const int *width,
 
 int findNextLambda(Node *node, Element *robot);
 
+void makeWave(Cell **map, const int *height, const int *width, Element *robot);
+
 #endif //ICFPC_2012_INTELLECT_H
