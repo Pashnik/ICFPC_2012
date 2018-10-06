@@ -11,7 +11,7 @@
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
  */
 
-int findShortestPath(Element *robot, Element *lambda, Cell **map) {
+int findShortestPath(Cell *robot, Cell *lambda, Cell **map) {
     Node *closed = NULL; // items we've already reviewed
     Node *opened = NULL; //items required for viewing
     Node *path = NULL;
@@ -24,19 +24,20 @@ int findShortestPath(Element *robot, Element *lambda, Cell **map) {
     f[0] = distance(robot, lambda);
     while (opened != NULL) {
         int minIndex = getMin(f, opened);
-        Element *current = (Element *) malloc(sizeof(Element));
+        Cell *current = (Cell *) malloc(sizeof(Cell));
         *current = deleteNth(&opened, minIndex);
         if (equalCoordinates(current, lambda)) {
             push(&path, current);
-            reestablishPath(path);
+            reestablishPath(path, map);
             robot->x = lambda->x;
             robot->y = lambda->y;
+            map[robot->y][robot->x].type = ROBOT;
             return 1;
         }
         push(&closed, current);
-        Element *neighbours = getNeighbours(current);
+        Cell *neighbours = getNeighbours(current, map);
         for (int i = 0; i < NUM_OF_NEIGHBOURS; ++i) {
-            if (!haveElement(closed, &neighbours[i]) && canMove(map, &neighbours[i])) {
+            if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i])) {
                 double temp = g[current->id] + distance(current, &neighbours[i]);
                 if (!haveElement(opened, &neighbours[i]) || temp < g[neighbours[i].id]) {
                     neighbours[i].id = id;
@@ -52,33 +53,30 @@ int findShortestPath(Element *robot, Element *lambda, Cell **map) {
     return 0;
 }
 
-Element *getNeighbours(Element *element) {
-    Element *neighbours = (Element *) malloc(NUM_OF_NEIGHBOURS * sizeof(Element));
-    neighbours[0].x = element->x + 1, neighbours[0].y = element->y;
-    neighbours[1].x = element->x - 1, neighbours[1].y = element->y;
-    neighbours[2].x = element->x, neighbours[2].y = element->y + 1;
-    neighbours[3].x = element->x, neighbours[3].y = element->y - 1;
+Cell *getNeighbours(Cell *cell, Cell **map) {
+    Cell *neighbours = (Cell *) malloc(NUM_OF_NEIGHBOURS * sizeof(Cell));
+    neighbours[0] = map[cell->y + 1][cell->x];
+    neighbours[1] = map[cell->y - 1][cell->x];
+    neighbours[2] = map[cell->y][cell->x + 1];
+    neighbours[3] = map[cell->y][cell->x - 1];
     return neighbours;
 }
 
-int equalCoordinates(Element *start, Element *end) {
+int equalCoordinates(Cell *start, Cell *end) {
     if (start->x == end->x && start->y == end->y) return 1;
     return 0;
 }
 
-double distance(Element *start, Element *end) {
+double distance(Cell *start, Cell *end) {
     return sqrt(pow(start->x - end->x, 2) + pow(start->y - end->y, 2));
 }
 
-int canMove(Cell **map, Element *cell) {
-    int x = cell->x, y = cell->y;
-    if (map[y][x].type == GROUND || map[y][x].type == LAMBDA || map[y][x].type == ROBOT ||
-        map[y][x].type == EMPTY)
-        return 1;
+int canMove(Cell *cell) {
+    if (cell->type == GROUND || cell->type == LAMBDA || cell->type == EMPTY) return 1;
     return 0;
 }
 
-void printRobotsCommand(Element *first, Element *second) {
+void printRobotsCommand(Cell *first, Cell *second) {
     if (first->y < second->y) pushCommand('U');
     else {
         if (first->y > second->y) pushCommand('D');
@@ -91,13 +89,19 @@ void printRobotsCommand(Element *first, Element *second) {
     }
 }
 
-void reestablishPath(Node *path) {
-    Element *prev;
-    Element *current;
+void reestablishPath(Node *path, Cell **map) {
+    Cell *prev;
+    Cell *current;
     int listSize = getSize(path);
-    current = getNth(path, 0)->element;
+    current = getNth(path, 0)->cell;
     while (current->id != 0) {
-        prev = getNth(path, listSize - current->id)->element;
+        if (current->type == LAMBDA) {
+            /*
+             * accidentally met lambda
+             */
+        }
+        map[current->y][current->x].type = EMPTY;
+        prev = getNth(path, listSize - current->id)->cell;
         printRobotsCommand(current, prev);
         *current = *prev;
     }

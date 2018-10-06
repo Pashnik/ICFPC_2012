@@ -9,6 +9,7 @@ typedef struct cell {
     enum cellType type;
     int x;
     int y;
+    int id;
 } Cell;
 
 #endif //ICFPC_2012_CELL_H

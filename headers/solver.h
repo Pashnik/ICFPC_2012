@@ -3,15 +3,13 @@
 
 #include "linkedList.h"
 #include "cell.h"
-#include "element.h"
 
-void start(Cell **map, const int *height, const int *width);
+void start(Cell **map);
 
-void setInitialInf(Cell **map, const int *height, const int *width,
-                   Node **lambda, Element *robot, Node **wall, Element *exit);
+void setInitialInf(Cell **map, Node **lambda, Cell *robot, Node **wall, Cell *exit);
 
-int findNextLambda(Node *node, Element *robot);
+int findNextLambda(Node *node, Cell *robot);
 
-void makeWave(Cell **map, const int *height, const int *width, Element *robot);
+void makeWave(Cell **map, Cell *robot, Node **lambda);
 
 #endif //ICFPC_2012_INTELLECT_H

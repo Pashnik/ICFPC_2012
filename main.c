@@ -1,6 +1,6 @@
-#include "headers/loader.h"
+#include "headers/launcher.h"
 
 int main() {
-    load("/Users/pashnik/Documents/Prog/ICFPC_2012/maps/beard1.map");
+    launch("/Users/pashnik/Documents/Prog/ICFPC_2012/maps/contest6.map");
     return 0;
 }

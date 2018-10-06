@@ -1,24 +1,24 @@
 #ifndef ICFPC_2012_LINKEDLIST_H
 #define ICFPC_2012_LINKEDLIST_H
 
-#include "element.h"
+#include "cell.h"
 
 typedef struct Node {
-    Element *element;
+    Cell *cell;
     struct Node *next;
 } Node;
 
-Element pop(Node **head);
+Cell pop(Node **head);
 
-Element deleteNth(Node **head, int n);
+Cell deleteNth(Node **head, int n);
 
 Node *getNth(Node *head, int n);
 
-void push(Node **head, Element *data);
+void push(Node **head, Cell *data);
 
 int getMin(const double *f, Node *node);
 
-int haveElement(Node *head, Element *element);
+int haveElement(Node *head, Cell *cell);
 
 int getSize(Node *node);
 

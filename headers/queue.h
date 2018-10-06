@@ -3,10 +3,10 @@
 
 #include "linkedList.h"
 
-void enqueue(Node **node, Element *element);
+void enqueue(Node **node, Cell *element);
 
-Element dequeue(Node **node);
+Cell dequeue(Node **node);
 
-void pushToEnd(Node **node, Element *element);
+void pushToEnd(Node **node, Cell *element);
 
 #endif //ICFPC_2012_QUEUE_H

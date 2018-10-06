@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "headers/stack.h"
+#include "../headers/stack.h"
 
 #define STACK_VAL 100 // stack length
 

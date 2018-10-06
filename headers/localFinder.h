@@ -3,23 +3,27 @@
 
 #include "solver.h"
 
-int equalCoordinates(Element *start, Element *end);
+int equalCoordinates(Cell *start, Cell *end);
 
-Element *getNeighbours(Element *element);
+Cell *getNeighbours(Cell *cell, Cell **map);
 
-int canMove(Cell **map, Element *cell);
+int canMove(Cell *cell);
 
 
-int findShortestPath(Element *robot, Element *lambda,
+int findShortestPath(Cell *robot, Cell *lambda,
                      Cell **map);
 
 
-void printRobotsCommand(Element *first, Element *second);
+void printRobotsCommand(Cell *first, Cell *second);
 
 
-double distance(Element *start, Element *end);
+double distance(Cell *start, Cell *end);
 
-void reestablishPath(Node *path);
+void reestablishPath(Node *path, Cell **map);
+
+extern int mapHeight;
+
+extern int mapWidth;
 
 #endif //ICFPC_2012_PATHFINDER_H
 

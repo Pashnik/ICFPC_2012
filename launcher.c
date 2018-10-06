@@ -1,13 +1,13 @@
 #include <memory.h>
 #include "stdio.h"
 #include "stdlib.h"
-#include "headers/loader.h"
+#include "headers/launcher.h"
 #include "headers/solver.h"
 
 #define START_WIDTH 60
 #define START_HEIGHT 60
 
-void load(char *fileName) {
+void launch(char *fileName) {
     int isAdditionalRule = 0, heightPointer = 0, widthPointer = 0;
     int currentHeight = START_HEIGHT;
     FILE *file;
@@ -34,17 +34,20 @@ void load(char *fileName) {
              */
         }
     }
-    widthPointer = getWidth(array, &heightPointer);
-    Cell **map = setCells(array, &heightPointer, &widthPointer);
-    start(map, &heightPointer, &widthPointer);
+    mapHeight = heightPointer;
+    widthPointer = getWidth(array);
+    mapWidth = widthPointer;
+    Cell **map = setCells(array);
+    start(map);
 }
 
-Cell **setCells(char **array, const int *height, const int *width) {
-    Cell **map = (Cell **) malloc(*height * sizeof(Cell *));
-    for (int i = 0; i < *height; ++i) {
-        map[i] = (Cell *) malloc(*width * sizeof(Cell));
-        for (int j = 0; j < *width; ++j) {
+Cell **setCells(char **array) {
+    Cell **map = (Cell **) malloc(mapHeight * sizeof(Cell *));
+    for (int i = 0; i < mapHeight; ++i) {
+        map[i] = (Cell *) malloc(mapWidth * sizeof(Cell));
+        for (int j = 0; j < mapWidth; ++j) {
             map[i][j].x = j, map[i][j].y = i;
+            map[i][j].id = 0;
             char symbol = array[i][j];
             switch (symbol) {
                 case 'R':
@@ -81,9 +84,9 @@ Cell **setCells(char **array, const int *height, const int *width) {
     return map;
 }
 
-int getWidth(char **array, const int *height) {
+int getWidth(char **array) {
     size_t maxWidth = 0;
-    for (int i = 0; i < *height; ++i) {
+    for (int i = 0; i < mapHeight; ++i) {
         size_t currentWidth = strlen(array[i]);
         if (currentWidth > maxWidth) maxWidth = currentWidth;
     }
