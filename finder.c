@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <math.h>
-#include "headers/localFinder.h"
+#include "headers/finder.h"
 #include "headers/stack.h"
 #include "stdio.h"
+#include "headers/queue.h"
 
 #define NUM_OF_NEIGHBOURS 4
 #define SIZE 100
@@ -11,7 +12,7 @@
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
  */
 
-int findShortestPath(Cell *robot, Cell *lambda, Cell **map) {
+int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
     Node *closed = NULL; // items we've already reviewed
     Node *opened = NULL; //items required for viewing
     Node *path = NULL;
@@ -28,7 +29,7 @@ int findShortestPath(Cell *robot, Cell *lambda, Cell **map) {
         *current = deleteNth(&opened, minIndex);
         if (equalCoordinates(current, lambda)) {
             push(&path, current);
-            reestablishPath(path, map);
+            reestablishPath(path, map, lambdas);
             robot->x = lambda->x;
             robot->y = lambda->y;
             map[robot->y][robot->x].type = ROBOT;
@@ -89,23 +90,42 @@ void printRobotsCommand(Cell *first, Cell *second) {
     }
 }
 
-void reestablishPath(Node *path, Cell **map) {
+void reestablishPath(Node *path, Cell **map, Node **lambdas) {
+    int counter = 0;
     Cell *prev;
     Cell *current;
     int listSize = getSize(path);
     current = getNth(path, 0)->cell;
     while (current->id != 0) {
-        if (current->type == LAMBDA) {
-            /*
-             * accidentally met lambda
-             */
+        if (current->type == LAMBDA && counter != 0) {
+            int index = getIndex(*lambdas, current);
+            deleteLambda(lambdas, index);
         }
         map[current->y][current->x].type = EMPTY;
         prev = getNth(path, listSize - current->id)->cell;
         printRobotsCommand(current, prev);
         *current = *prev;
+        ++counter;
     }
     while (!isEmpty()) {
         printf("%c\n", popCommand());
+    }
+}
+
+void makeWave(Cell **map, Cell *robot, Node **lambda) {
+    Node *closed = NULL;
+    Node *queue = NULL;
+    enqueue(&queue, robot);
+    while (queue != NULL) {
+        Cell *current = (Cell *) malloc(sizeof(Cell));
+        *current = dequeue(&queue);
+        push(&closed, current);
+        Cell *neighbours = getNeighbours(current, map);
+        for (int i = 0; i < 4; ++i) {
+            if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i]))
+                enqueue(&queue, &neighbours[i]);
+        }
+        if (current->type == LAMBDA && !haveElement(*lambda, current))
+            push(lambda, current);
     }
 }

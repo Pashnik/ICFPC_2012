@@ -1,15 +1,15 @@
 #ifndef ICFPC_2012_INTELLECT_H
 #define ICFPC_2012_INTELLECT_H
 
-#include "linkedList.h"
+#include "list.h"
 #include "cell.h"
 
 void start(Cell **map);
 
-void setInitialInf(Cell **map, Node **lambda, Cell *robot, Node **wall, Cell *exit);
+void setInitialInf(Cell **map, Cell *robot, Node **wall, Cell *wayOut);
 
 int findNextLambda(Node *node, Cell *robot);
 
-void makeWave(Cell **map, Cell *robot, Node **lambda);
+Cell deleteLambda(Node **lambdas, int id);
 
 #endif //ICFPC_2012_INTELLECT_H

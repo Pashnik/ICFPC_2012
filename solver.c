@@ -2,7 +2,7 @@
 #include "headers/cell.h"
 #include "math.h"
 #include "headers/solver.h"
-#include "headers/localFinder.h"
+#include "headers/finder.h"
 #include "headers/queue.h"
 #include "stdio.h"
 
@@ -13,29 +13,26 @@ void start(Cell **map) {
     Node *stones = NULL;
     Cell *robot = (Cell *) malloc(sizeof(Cell));
     Cell *wayOut = (Cell *) malloc(sizeof(Cell));
-    setInitialInf(map, &lambdas, robot, &stones, wayOut);
+    setInitialInf(map, robot, &stones, wayOut);
     makeWave(map, robot, &lambdas);
 
     //Test for finding the path to the shortest lambda!
     while (lambdas != NULL) {
         int nextLambda = findNextLambda(lambdas, robot);
-        Cell lambda = deleteNth(&lambdas, nextLambda);
-        if (findShortestPath(robot, &lambda, map))
+        Cell lambda = deleteLambda(&lambdas, nextLambda);
+        if (findShortestPath(robot, &lambda, map, &lambdas))
             lambdas = getNth(lambdas, 0);
     }
 }
 
 /*
- * This method finds the coordinates of all found lambdas, walls and robots and remembers them
+ * This method finds the coordinates of all found walls and robots and remembers them
  */
 
-void setInitialInf(Cell **map, Node **lambda, Cell *robot, Node **stone, Cell *wayOut) {
+void setInitialInf(Cell **map, Cell *robot, Node **stone, Cell *wayOut) {
     for (int i = 0; i < mapHeight; ++i) {
         for (int j = 0; j < mapWidth; ++j) {
-            //if (map[i][j].type == LAMBDA) push(lambda, &map[i][j]);
-
             if (map[i][j].type == STONE) push(stone, &map[i][j]);
-
             if (map[i][j].type == CLOSED_OUT) wayOut->x = map[i][j].x, wayOut->y = map[i][j].y;
             if (map[i][j].type == ROBOT) robot->x = map[i][j].x, robot->y = map[i][j].y;
         }
@@ -57,20 +54,6 @@ int findNextLambda(Node *node, Cell *robot) {
     return index;
 }
 
-void makeWave(Cell **map, Cell *robot, Node **lambda) {
-    Node *closed = NULL;
-    Node *queue = NULL;
-    enqueue(&queue, robot);
-    while (queue != NULL) {
-        Cell *current = (Cell *) malloc(sizeof(Cell));
-        *current = dequeue(&queue);
-        push(&closed, current);
-        Cell *neighbours = getNeighbours(current, map);
-        for (int i = 0; i < 4; ++i) {
-            if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i]))
-                enqueue(&queue, &neighbours[i]);
-        }
-        if (current->type == LAMBDA && !haveElement(*lambda, current))
-            push(lambda, current);
-    }
+Cell deleteLambda(Node **lambdas, int id) {
+    return deleteNth(lambdas, id);
 }

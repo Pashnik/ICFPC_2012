@@ -10,6 +10,8 @@ typedef struct Node {
 
 Cell pop(Node **head);
 
+int getIndex(Node *node, Cell *cell);
+
 Cell deleteNth(Node **head, int n);
 
 Node *getNth(Node *head, int n);

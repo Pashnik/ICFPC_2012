@@ -1,7 +1,7 @@
 #ifndef ICFPC_2012_QUEUE_H
 #define ICFPC_2012_QUEUE_H
 
-#include "linkedList.h"
+#include "list.h"
 
 void enqueue(Node **node, Cell *element);
 

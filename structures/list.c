@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "../headers/linkedList.h"
+#include "../headers/list.h"
 
 void push(Node **head, Cell *data) {
     Node *tmp = (Node *) malloc(sizeof(Node));
@@ -69,4 +69,15 @@ int getSize(Node *node) {
         node = node->next;
     }
     return counter;
+}
+
+int getIndex(Node *node, Cell *cell) {
+    int counter = 0;
+    while (node != NULL) {
+        if (node->cell->x == cell->x && node->cell->y == cell->y)
+            return counter;
+        ++counter;
+        node = node->next;
+    }
+    return -1;
 }
