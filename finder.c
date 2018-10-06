@@ -119,13 +119,15 @@ void makeWave(Cell **map, Cell *robot, Node **lambda) {
     while (queue != NULL) {
         Cell *current = (Cell *) malloc(sizeof(Cell));
         *current = dequeue(&queue);
-        push(&closed, current);
-        Cell *neighbours = getNeighbours(current, map);
-        for (int i = 0; i < 4; ++i) {
-            if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i]))
-                enqueue(&queue, &neighbours[i]);
+        if (!haveElement(closed, current)) {
+            push(&closed, current);
+            Cell *neighbours = getNeighbours(current, map);
+            for (int i = 0; i < 4; ++i) {
+                if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i]))
+                    enqueue(&queue, &neighbours[i]);
+            }
+            if (current->type == LAMBDA && !haveElement(*lambda, current))
+                push(lambda, current);
         }
-        if (current->type == LAMBDA && !haveElement(*lambda, current))
-            push(lambda, current);
     }
 }
