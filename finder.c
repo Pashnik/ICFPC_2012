@@ -6,7 +6,7 @@
 #include "headers/queue.h"
 
 #define NUM_OF_NEIGHBOURS 4
-#define SIZE 100
+#define SIZE 200
 
 /*
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
@@ -32,7 +32,6 @@ int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
             reestablishPath(path, map, lambdas);
             robot->x = lambda->x;
             robot->y = lambda->y;
-            map[robot->y][robot->x].type = ROBOT;
             return 1;
         }
         push(&closed, current);
