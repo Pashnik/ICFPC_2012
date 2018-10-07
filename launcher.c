@@ -4,8 +4,8 @@
 #include "headers/launcher.h"
 #include "headers/solver.h"
 
-#define START_WIDTH 60
-#define START_HEIGHT 60
+#define START_WIDTH 100
+#define START_HEIGHT 100
 
 void launch(char *fileName) {
     int isAdditionalRule = 0, heightPointer = 0, widthPointer = 0;
@@ -22,7 +22,7 @@ void launch(char *fileName) {
         if (!strPointer) break;
         if (heightPointer > currentHeight) {
             currentHeight += START_HEIGHT;
-            *array = (char *) realloc(*array, currentHeight * sizeof(char));
+            array = (char **) realloc(array, currentHeight * sizeof(char *));
         }
         if (*strPointer == '\n') isAdditionalRule = 1;
         if (!isAdditionalRule) {
@@ -38,6 +38,7 @@ void launch(char *fileName) {
     widthPointer = getWidth(array);
     mapWidth = widthPointer;
     Cell **map = setCells(array);
+    freeArray(array);
     start(map);
 }
 
@@ -91,4 +92,11 @@ int getWidth(char **array) {
         if (currentWidth > maxWidth) maxWidth = currentWidth;
     }
     return (int) maxWidth - 1;
+}
+
+void freeArray(char **array) {
+    for (int i = 0; i < mapWidth; ++i) {
+        free(array[i]);
+    }
+    free(array);
 }

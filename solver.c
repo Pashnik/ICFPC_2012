@@ -4,7 +4,9 @@
 #include "headers/solver.h"
 #include "headers/finder.h"
 #include "headers/queue.h"
+#include "headers/simulation.h"
 #include "stdio.h"
+
 
 #define SIZE 100
 
@@ -23,6 +25,7 @@ void start(Cell **map) {
         if (findShortestPath(robot, &lambda, map, &lambdas))
             lambdas = getNth(lambdas, 0);
     }
+    printScore();
 }
 
 /*

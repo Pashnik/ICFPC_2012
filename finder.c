@@ -4,9 +4,10 @@
 #include "headers/stack.h"
 #include "stdio.h"
 #include "headers/queue.h"
+#include "headers/simulation.h"
 
 #define NUM_OF_NEIGHBOURS 4
-#define SIZE 200
+#define SIZE 100
 
 /*
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
@@ -16,14 +17,20 @@ int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
     Node *closed = NULL; // items we've already reviewed
     Node *opened = NULL; //items required for viewing
     Node *path = NULL;
+    Cell *neighbours = NULL;
     push(&opened, robot);
     robot->id = 0;
-    int id = 1;
+    int id = 1, newSize = SIZE;
     double *g = (double *) malloc(SIZE * (sizeof(double)));
     double *f = (double *) malloc(SIZE * sizeof(double));
     g[0] = 0;
     f[0] = distance(robot, lambda);
     while (opened != NULL) {
+        if (id > newSize) {
+            newSize += SIZE;
+            g = (double *) realloc(g, newSize * sizeof(double));
+            f = (double *) realloc(f, newSize * sizeof(double));
+        }
         int minIndex = getMin(f, opened);
         Cell *current = (Cell *) malloc(sizeof(Cell));
         *current = deleteNth(&opened, minIndex);
@@ -32,10 +39,11 @@ int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
             reestablishPath(path, map, lambdas);
             robot->x = lambda->x;
             robot->y = lambda->y;
+            free(g), free(f), free(neighbours), free(current);
             return 1;
         }
         push(&closed, current);
-        Cell *neighbours = getNeighbours(current, map);
+        neighbours = getNeighbours(current, map);
         for (int i = 0; i < NUM_OF_NEIGHBOURS; ++i) {
             if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i])) {
                 double temp = g[current->id] + distance(current, &neighbours[i]);
@@ -50,6 +58,7 @@ int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
             }
         }
     }
+    free(neighbours);
     return 0;
 }
 
@@ -76,52 +85,19 @@ int canMove(Cell *cell) {
     return 0;
 }
 
-void printRobotsCommand(Cell *first, Cell *second) {
-    if (first->y < second->y) pushCommand('U');
-    else {
-        if (first->y > second->y) pushCommand('D');
-        else {
-            if (first->x < second->x) pushCommand('L');
-            else {
-                if (first->x > second->x) pushCommand('R');
-            }
-        }
-    }
-}
-
-void reestablishPath(Node *path, Cell **map, Node **lambdas) {
-    int counter = 0;
-    Cell *prev;
-    Cell *current;
-    int listSize = getSize(path);
-    current = getNth(path, 0)->cell;
-    while (current->id != 0) {
-        if (current->type == LAMBDA && counter != 0) {
-            int index = getIndex(*lambdas, current);
-            deleteLambda(lambdas, index);
-        }
-        map[current->y][current->x].type = EMPTY;
-        prev = getNth(path, listSize - current->id)->cell;
-        printRobotsCommand(current, prev);
-        *current = *prev;
-        ++counter;
-    }
-    while (!isEmpty()) {
-        printf("%c\n", popCommand());
-    }
-}
-
 void makeWave(Cell **map, Cell *robot, Node **lambda) {
+    Cell *neighbours = NULL;
     Node *closed = NULL;
     Node *queue = NULL;
+    Cell *current = NULL;
     enqueue(&queue, robot);
     while (queue != NULL) {
-        Cell *current = (Cell *) malloc(sizeof(Cell));
+        current = (Cell *) malloc(sizeof(Cell));
         *current = dequeue(&queue);
         if (!haveElement(closed, current)) {
             push(&closed, current);
-            Cell *neighbours = getNeighbours(current, map);
-            for (int i = 0; i < 4; ++i) {
+            neighbours = getNeighbours(current, map);
+            for (int i = 0; i < NUM_OF_NEIGHBOURS; ++i) {
                 if (!haveElement(closed, &neighbours[i]) && canMove(&neighbours[i]))
                     enqueue(&queue, &neighbours[i]);
             }
@@ -129,4 +105,5 @@ void makeWave(Cell **map, Cell *robot, Node **lambda) {
                 push(lambda, current);
         }
     }
+    free(neighbours);
 }

@@ -9,6 +9,8 @@ int getWidth(char **array);
 
 void launch(char *fileName);
 
+void freeArray(char **array);
+
 int mapHeight;
 
 int mapWidth;
