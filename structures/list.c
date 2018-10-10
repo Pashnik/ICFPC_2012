@@ -81,3 +81,14 @@ int getIndex(Node *node, Cell *cell) {
     }
     return -1;
 }
+
+
+void deleteList(Node **head) {
+    while ((*head)) {
+        pop(head);
+        if ((*head) != NULL) {
+            *head = (*head)->next;
+        }
+    }
+    free(*head);
+}

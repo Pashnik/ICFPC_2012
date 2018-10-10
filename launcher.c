@@ -95,7 +95,7 @@ int getWidth(char **array) {
 }
 
 void freeArray(char **array) {
-    for (int i = 0; i < mapWidth; ++i) {
+    for (int i = 0; i < mapHeight; ++i) {
         free(array[i]);
     }
     free(array);

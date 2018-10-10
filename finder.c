@@ -13,7 +13,7 @@
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
  */
 
-int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
+int findLocalPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
     Node *closed = NULL; // items we've already reviewed
     Node *opened = NULL; //items required for viewing
     Node *path = NULL;
@@ -36,10 +36,11 @@ int findShortestPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
         *current = deleteNth(&opened, minIndex);
         if (equalCoordinates(current, lambda)) {
             push(&path, current);
-            reestablishPath(path, map, lambdas);
             robot->x = lambda->x;
             robot->y = lambda->y;
+            reestablishPath(path, map, lambdas, lambda);
             free(g), free(f), free(neighbours), free(current);
+            deleteList(&closed);
             return 1;
         }
         push(&closed, current);
