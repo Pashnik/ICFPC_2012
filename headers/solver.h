@@ -12,4 +12,6 @@ int findNextLambda(Node *node, Cell *robot);
 
 Cell deleteLambda(Node **lambdas, int id);
 
+int haveLambdas(Cell **map);
+
 #endif //ICFPC_2012_INTELLECT_H

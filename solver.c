@@ -25,8 +25,11 @@ void start(Cell **map) {
         if (findLocalPath(robot, &lambda, map, &lambdas))
             lambdas = getNth(lambdas, 0);
     }
-    //heading to the exit
 
+    //heading to the exit if there is no lambda on the map
+    if (!haveLambdas(map)) {
+        if (!findLocalPath(robot, wayOut, map, &lambdas)) printf("A \n");
+    } else printf("A \n");
     getScore();
 }
 
@@ -61,4 +64,14 @@ int findNextLambda(Node *node, Cell *robot) {
 
 Cell deleteLambda(Node **lambdas, int id) {
     return deleteNth(lambdas, id);
+}
+
+int haveLambdas(Cell **map) {
+    for (int i = 0; i < mapHeight; ++i) {
+        for (int j = 0; j < mapWidth; ++j) {
+            if (map[i][j].type == LAMBDA)
+                return 1;
+        }
+    }
+    return 0;
 }

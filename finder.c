@@ -13,7 +13,7 @@
  * This method finds the shortest local path from point a to point b, using the algorithm A-STAR
  */
 
-int findLocalPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
+int findLocalPath(Cell *robot, Cell *cellEnd, Cell **map, Node **lambdas) {
     Node *closed = NULL; // items we've already reviewed
     Node *opened = NULL; //items required for viewing
     Node *path = NULL;
@@ -24,7 +24,7 @@ int findLocalPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
     double *g = (double *) malloc(SIZE * (sizeof(double)));
     double *f = (double *) malloc(SIZE * sizeof(double));
     g[0] = 0;
-    f[0] = distance(robot, lambda);
+    f[0] = distance(robot, cellEnd);
     while (opened != NULL) {
         if (id > newSize) {
             newSize += SIZE;
@@ -34,11 +34,11 @@ int findLocalPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
         int minIndex = getMin(f, opened);
         Cell *current = (Cell *) malloc(sizeof(Cell));
         *current = deleteNth(&opened, minIndex);
-        if (equalCoordinates(current, lambda)) {
+        if (equalCoordinates(current, cellEnd)) {
             push(&path, current);
-            robot->x = lambda->x;
-            robot->y = lambda->y;
-            reestablishPath(path, map, lambdas, lambda);
+            robot->x = cellEnd->x;
+            robot->y = cellEnd->y;
+            reestablishPath(path, map, lambdas, cellEnd);
             free(g), free(f), free(neighbours), free(current);
             deleteList(&closed);
             return 1;
@@ -52,7 +52,7 @@ int findLocalPath(Cell *robot, Cell *lambda, Cell **map, Node **lambdas) {
                     neighbours[i].id = id;
                     push(&path, current);
                     g[neighbours[i].id] = temp;
-                    f[neighbours[i].id] = g[neighbours[i].id] + distance(&neighbours[i], lambda);
+                    f[neighbours[i].id] = g[neighbours[i].id] + distance(&neighbours[i], cellEnd);
                     ++id;
                 }
                 if (!haveElement(opened, &neighbours[i])) push(&opened, &neighbours[i]);

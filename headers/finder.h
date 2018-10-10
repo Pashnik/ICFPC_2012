@@ -10,7 +10,7 @@ Cell *getNeighbours(Cell *cell, Cell **map);
 int canMove(Cell *cell);
 
 
-int findLocalPath(Cell *robot, Cell *lambda,
+int findLocalPath(Cell *robot, Cell *cellEnd,
                   Cell **map, Node **lambdas);
 
 void makeWave(Cell **map, Cell *robot, Node **lambda);
