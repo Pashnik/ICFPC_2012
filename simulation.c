@@ -16,10 +16,6 @@ void reestablishPath(Node *returnPath, Cell **map, Node **lambdas, Cell *current
         Cell *cur = (Cell *) malloc(sizeof(Cell));
         *cur = *current;
         push(&path, cur);
-        if (current->type == LAMBDA && counter != 0) { // met lambda by chance
-            int index = getIndex(*lambdas, current);
-            deleteLambda(lambdas, index);
-        }
         prev = getNth(returnPath, listSize - current->id)->cell;
         selectCommand(current, prev);
         *current = *prev;
@@ -49,8 +45,13 @@ void getScore() {
 
 void checkPath(Node *path, Cell **map, Cell *lambda, Node **lambdas) {
     Cell *current = getNth(path, 0)->cell;
+    int counter = 0;
     while (path != NULL) {
-        if (current->type == LAMBDA) score += 25;
+        if (current->type == LAMBDA && counter != 0) {
+            int index = getIndex(*lambdas, current);
+            deleteLambda(lambdas, index);
+            score += 25;
+        }
         Cell *nextCell = getNth(path, 0)->cell;
         if (canMakeStep(map, nextCell)) { // доп проверка на лямбду
             map[current->y][current->x].type = EMPTY;
@@ -65,6 +66,7 @@ void checkPath(Node *path, Cell **map, Cell *lambda, Node **lambdas) {
             freeStack();
             findLocalPath(current, lambda, map, lambdas);
         }
+        ++counter;
     }
     if (current->type == LAMBDA) {
         score += 25;

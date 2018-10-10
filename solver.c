@@ -18,13 +18,15 @@ void start(Cell **map) {
     setInitialInf(map, robot, &stones, wayOut);
     makeWave(map, robot, &lambdas);
 
-    //Finding the path to the shortest lambda!
+    //try to pick up all of the lambdas
     while (lambdas != NULL) {
         int nextLambda = findNextLambda(lambdas, robot);
         Cell lambda = deleteLambda(&lambdas, nextLambda);
         if (findLocalPath(robot, &lambda, map, &lambdas))
             lambdas = getNth(lambdas, 0);
     }
+    //heading to the exit
+
     getScore();
 }
 
