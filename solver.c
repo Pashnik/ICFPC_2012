@@ -29,6 +29,8 @@ void start(Cell **map) {
     if (!haveLambdas(map)) {
         if (!findLocalPath(robot, wayOut, map, &lambdas)) printf("A \n");
     } else printf("A \n");
+
+    //show total score
     getScore();
 }
 
