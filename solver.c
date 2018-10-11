@@ -12,10 +12,9 @@
 
 void start(Cell **map) {
     Node *lambdas = NULL;
-    Node *stones = NULL;
     Cell *robot = (Cell *) malloc(sizeof(Cell));
     Cell *wayOut = (Cell *) malloc(sizeof(Cell));
-    setInitialInf(map, robot, &stones, wayOut);
+    setInitialInf(map, robot, wayOut);
     makeWave(map, robot, &lambdas);
 
     //try to pick up all of the lambdas
@@ -37,10 +36,9 @@ void start(Cell **map) {
  * This method finds the coordinates of all found walls and robots and remembers them
  */
 
-void setInitialInf(Cell **map, Cell *robot, Node **stone, Cell *wayOut) {
+void setInitialInf(Cell **map, Cell *robot, Cell *wayOut) {
     for (int i = 0; i < mapHeight; ++i) {
         for (int j = 0; j < mapWidth; ++j) {
-            if (map[i][j].type == STONE) push(stone, &map[i][j]);
             if (map[i][j].type == CLOSED_OUT) wayOut->x = map[i][j].x, wayOut->y = map[i][j].y;
             if (map[i][j].type == ROBOT) robot->x = map[i][j].x, robot->y = map[i][j].y;
         }

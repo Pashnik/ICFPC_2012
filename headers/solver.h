@@ -6,7 +6,7 @@
 
 void start(Cell **map);
 
-void setInitialInf(Cell **map, Cell *robot, Node **wall, Cell *wayOut);
+void setInitialInf(Cell **map, Cell *robot, Cell *wayOut);
 
 int findNextLambda(Node *node, Cell *robot);
 
